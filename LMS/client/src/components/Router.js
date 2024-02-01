@@ -5,8 +5,11 @@ import Code from "./learnComponents/code";
 const Router = () => {
   return (
       <Routes>
-        <Route path="/" element={<Course />} />
+        <Route path="/" element={<Course />} />  
         <Route path="/playground" element={<Code />} />
+        <Route path="/saved" element={<Code />} />
+        <Route path="/subscribed" element={<Code />} />
+
       </Routes>
   );
 };
