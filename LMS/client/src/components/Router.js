@@ -1,5 +1,5 @@
 import { Route, Routes } from "react-router-dom";
-import Code from "./learnComponents/code";
+import Code from "./learnComponents/code/code";
 import Saved from "./learnComponents/saved";
 import Subscribed from "./learnComponents/subscribed";
 import CourseList from "./learnComponents/Course/CourseList";

@@ -14,14 +14,16 @@ import ListItemText from "@mui/material/ListItemText";
 export default function SidebarItems(props) {
   const { open } = props;
   return (
-      <List>
-        <Link to="/" style={{ textDecoration: "none"}}>
-          <ListItem disablePadding sx={{ display: "block" }}>
+      <List sx={{position:"fixed"}}>
+        <Link to="/" style={{ textDecoration: "none" }}>
+          <ListItem disablePadding >
             <ListItemButton
               sx={{
                 minHeight: 48,
                 justifyContent: open ? "initial" : "center",
                 px: 2.5,
+                display:"flex",
+                maxWidth: open ?  "none": "60px !important",
               }}
             >
               <ListItemIcon
@@ -41,13 +43,15 @@ export default function SidebarItems(props) {
           </ListItem>
         </Link>
         <Link to="/job" style={{ textDecoration: "none"}}>
-          {" "}
+          
           <ListItem disablePadding sx={{ display: "block" }}>
             <ListItemButton
               sx={{
                 minHeight: 48,
                 justifyContent: open ? "initial" : "center",
                 px: 2.5,
+                display:"flex",
+                maxWidth: open ?  "none": "60px !important",
               }}
             >
               <ListItemIcon
@@ -70,6 +74,8 @@ export default function SidebarItems(props) {
                 minHeight: 48,
                 justifyContent: open ? "initial" : "center",
                 px: 2.5,
+                display:"flex",
+                maxWidth: open ?  "none": "60px !important",
               }}
             >
               <ListItemIcon
@@ -95,6 +101,8 @@ export default function SidebarItems(props) {
                 minHeight: 48,
                 justifyContent: open ? "initial" : "center",
                 px: 2.5,
+                display:"flex",
+                maxWidth: open ?  "none": "60px !important",
               }}
             >
               <ListItemIcon
@@ -113,13 +121,19 @@ export default function SidebarItems(props) {
             </ListItemButton>
           </ListItem>
         </Link>
-        <Link to="/saved" style={{ textDecoration: "none"}}>
+        <Link to="/saved" 
+        style={{ textDecoration: "none",
+        
+       
+        }}>
           <ListItem disablePadding sx={{ display: "block" }}>
             <ListItemButton
               sx={{
                 minHeight: 48,
                 justifyContent: open ? "initial" : "center",
                 px: 2.5,
+                display:"flex",
+                maxWidth: open ?  "none": "60px !important",
               }}
             >
               <ListItemIcon

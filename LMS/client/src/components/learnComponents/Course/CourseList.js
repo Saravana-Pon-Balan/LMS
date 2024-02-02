@@ -4,13 +4,12 @@ import CourseCard from './CourseCard';
 
 const CourseList = ({ courses }) => {
   return (
-    <Grid container spacing={5} sx={{display: "flex",overflowY: "scroll",position:"relative"}}>
+    <Grid container spacing={2} sx={{maxWidth:"100vw",display: "flex",overflowY: "scroll",position:"relative"}}>
       {courses.map((course) => (
-        <Grid item key={course.id} xs={12} sm={6} md={4} lg={3}>
+        <Grid item key={course.id} xs={12} sm={6} md={5} lg={4}>
           <CourseCard
             title={course.title}
             description={course.description}
-            buttonText="Enroll Now"
           />
         </Grid>
       ))}
