@@ -59,7 +59,6 @@ const courses = [
         title: 'Data Science Masterclass',
         description: 'Explore the world of data science with hands-on projects and real-world applications.',
       },
-    // Add more courses as needed
   ];
   
   export default courses;

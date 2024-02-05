@@ -11,7 +11,10 @@ const Block = styled.div`
   flex-direction:coloumn;
   background-color:;
 `;
-
+const Container = styled.div`
+  position:relative;
+  margin-top:5%;
+`
 const App = () => {
   
   return (
@@ -20,9 +23,9 @@ const App = () => {
       <BrowserRouter>
         <Block>
           <Sidebar />
-          <Box style={{marginTop:"5%"}}>
+          <Container >
           <Router  />
-          </Box>
+          </Container>
         </Block>
       </BrowserRouter>
     </div>

@@ -6,10 +6,18 @@ import CardMedia from '@mui/material/CardMedia';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import img from "/home/saravana/project/LMS/client/src/components/learnComponents/Course/img/mui-react.avif";
+import { Link } from 'react-router-dom';
 export default function CourseCard(props) {
-  const {title,description} = props;
+  const {id,title,description} = props;
   return (
-    <Card sx={{ margin:"20px",maxWidth: 380,boxShadow: "inset 13px 20px 42px 11px rgba(0,100,0,0.73)" }}>
+    <Link to="/courses/${id}" >
+    <Card 
+    sx={{ margin:"20px",
+    maxWidth: 380,
+    boxShadow: "inset 13px 20px 42px 11px rgba(0,100,0,0.73)",
+    }}
+    
+    >
       <CardMedia
         sx={{ height: 140 }}
         image={img}
@@ -28,5 +36,6 @@ export default function CourseCard(props) {
         <Button size="medium" variant='outlined'>Learn More</Button>
       </CardActions>
     </Card>
+    </Link>
   );
 }
