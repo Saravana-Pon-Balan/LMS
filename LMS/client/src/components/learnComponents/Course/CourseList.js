@@ -15,7 +15,7 @@ const CourseList = () => {
           />
         </Grid>
       ))}
-    </Grid>
+    </Grid>    
   );
 };
 

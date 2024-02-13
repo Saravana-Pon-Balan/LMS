@@ -10,11 +10,12 @@ import { Link } from 'react-router-dom';
 export default function CourseCard(props) {
   const {id,title,description} = props;
   return (
-    <Link to="/courses/${id}" >
+    <Link style={{textDecoration:"none"}} to={`/courses/${id}`} >
     <Card 
     sx={{ margin:"20px",
     maxWidth: 380,
-    boxShadow: "inset 13px 20px 42px 11px rgba(0,100,0,0.73)",
+    boxShadow: "13px 20px 42px 11px rgba(1,3,5,0.73)",
+    borderRadius:"20px"
     }}
     
     >
