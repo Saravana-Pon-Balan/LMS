@@ -9,47 +9,71 @@ import { TreeItem } from '@mui/x-tree-view/TreeItem';
 
 const CourseDetails = () => {
   const { id } = useParams();
-
   return (
     <>
-    <Box margin={"10px"} display={"flex"}>
-      <Box display={"flex"} flexDirection={"column"}>
-        <img src={img} alt="Thumbnail" width={"350px"} height={"300px"} style={{borderRadius:"10px"}}/>
-        <Button variant="outlined" color="primary" height="60px" style={{marginTop:"20px"}}>
-          Start
-        </Button>
-      </Box>
-      <Box
-        padding={"20px"}
-        marginLeft={"20px"}
-        border={"3px solid black"}
-        maxWidth={"60%"}
-      >
-        <Typography variant="h5" color="initial">
-          Description
-        </Typography>
-        <Typography variant="body1" color="initial">
-          Description widuwhedwul2irgelf iu r wfbifb fbweifbweifb bf b
-          iuhwefuwefwfbawfvbufvsadvhbdsjvbasjfbwI
-        </Typography>
-      </Box>
-      <Box border={"3px solid black"} 
-      marginLeft={"10px"} 
-      padding={"20px"}
-      maxWidth={"280px"}
-      sx={{wordWrap:"break-word"}}
+    <Box margin={"10px"} display={"flex"} maxHeight={"350px"}>
+  <Box display={"flex"} flexDirection={"column"}>
+    <img src={img} alt="Thumbnail" width={"350px"} height={"300px"} style={{borderRadius:"10px"}}/>
+    <Button variant="outlined" color="primary" height="60px" style={{marginTop:"20px"}}>
+      Start
+    </Button>
+  </Box>
+  <Box
+    padding={"20px"}
+    marginLeft={"20px"}
+    border={"3px solid black"}
+    maxWidth={"60%"}
+    height={"100%"}
+    style={{ overflowY: "scroll" }}
+  >
+    <Typography variant="h5" color="initial">
+      Description
+    </Typography>
+    <Typography variant="body1" color="initial" style={{ maxHeight: "275px", overflowY: "scroll" }}>
+      Description widuwhedwul2irgelf iu r wfbifb fbweifbweifb bf b
+      iuhwefuwefwfbawfvbufvsadvhbdsjvbasjfbwI
+      Description widuwhedwul2irgelf iu r wfbifb fbweifbweifb bf b
+      iuhwefuwefwfbawfvbufvsadvhbdsjvbasjfbwIDescription widuwhedwul2irgelf iu r wfbifb fbweifbweifb bf b
+      iuhwefuwefwfbawfvbufvsadvhbdsjvbasjfbwIDescription widuwhedwul2irgelf iu r wfbifb fbweifbweifb bf b
+      iuhwefuwefwfbawfvbufvsadvhbdsjvbasjfbwIDescription widuwhedwul2irgelf iu r wfbifb fbweifbweifb bf b
+      iuhwefuwefwfbawfvbufvsadvhbdsjvbasjfbwIDescription widuwhedwul2irgelf iu r wfbifb fbweifbweifb bf b
+      iuhwefuwefwfbawfvbufvsadvhbdsjvbasjfbwIDescription widuwhedwul2irgelf iu r wfbifb fbweifbweifb bf b
+      iuhwefuwefwfbawfvbufvsadvhbdsjvbasjfbwIDescription widuwhedwul2irgelf iu r wfbifb fbweifbweifb bf b
+      iuhwefuwefwfbawfvbufvsadvhbdsjvbasjfbwIDescription widuwhedwul2irgelf iu r wfbifb fbweifbweifb bf b
+      iuhwefuwefwfbawfvbufvsadvhbdsjvbasjfbwIDescription widuwhedwul2irgelf iu r wfbifb fbweifbweifb bf b
+      iuhwefuwefwfbawfvbufvsadvhbdsjvbasjfbwIDescription widuwhedwul2irgelf iu r wfbifb fbweifbweifb bf b
+      iuhwefuwefwfbawfvbufvsadvhbdsjvbasjfbwIDescription widuwhedwul2irgelf iu r wfbifb fbweifbweifb bf b
+      iuhwefuwefwfbawfvbufvsadvhbdsjvbasjfbwIDescription widuwhedwul2irgelf iu r wfbifb fbweifbweifb bf b
+      iuhwefuwefwfbawfvbufvsadvhbdsjvbasjfbwIDescription widuwhedwul2irgelf iu r wfbifb fbweifbweifb bf b
+      iuhwefuwefwfbawfvbufvsadvhbdsjvbasjfbwIDescription widuwhedwul2irgelf iu r wfbifb fbweifbweifb bf b
+      iuhwefuwefwfbawfvbufvsadvhbdsjvbasjfbwIDescription widuwhedwul2irgelf iu r wfbifb fbweifbweifb bf b
+      iuhwefuwefwfbawfvbufvsadvhbdsjvbasjfbwIDescription widuwhedwul2irgelf iu r wfbifb fbweifbweifb bf b
+      iuhwefuwefwfbawfvbufvsadvhbdsjvbasjfbwIDescription widuwhedwul2irgelf iu r wfbifb fbweifbweifb bf b
+      iuhwefuwefwfbawfvbufvsadvhbdsjvbasjfbwI
+    </Typography>
+  </Box>
+  <Box
+    border={"3px solid black"} 
+    marginLeft={"10px"} 
+    padding={"20px"}
+    maxWidth={"280px"}
+    sx={{wordWrap:"break-word"}}
+  >
+    <Typography variant="h5" color="initial">
+      Publisher
+    </Typography>
+    <Typography variant="body1" color="initial" style={{ maxHeight: "275px", overflowY: "scroll" }}>
+      Description widuwhedwul2irgelf iu r wfbifb fbweifbweifb bf b
+      iuhwefuwefwfbawfvbufvsadvhbdsjvbasjfbwI
+      Description widuwhedwul2irgelf iu r wfbifb fbweifbweifb bf b
+      iuhwefuwefwfbawfvbufvsadvhbdsjvbasjfbwIDescription widuwhedwul2irgelf iu r wfbifb fbweifbweifb bf b
+      iuhwefuwefwfbawfvbufvsadvhbdsjvbasjfbwIDescription widuwhedwul2irgelf iu r wfbifb fbweifbweifb bf b
+      iuhwefuwefwfbawfvbufvsadvhbdsjvbasjfbwIDescription widuwhedwul2irgelf iu r wfbifb fbweifbweifb bf b
+      iuhwefuwefwfbawfvbufvsadvhbdsjvbasjfbwI
+    </Typography>
+  </Box>
+</Box>
 
-      >
-        <Typography variant="h5" color="initial">
-          Publisher
-        </Typography>
-        <Typography variant="body1" color="initial">
-          Description widuwhedwul2irgelf iu r wfbifb fbweifbweifb bf b
-          iuhwefuwefwfbawfvbufvsadvhbdsjvbasjfbwI
-        </Typography>
-
-      </Box>
-    </Box>
     <Box width={"100%"} border={"3px solid black"}>
       <Typography variant="h5">
       Contents
@@ -58,12 +82,30 @@ const CourseDetails = () => {
         aria-label="file system navigator"
         defaultCollapseIcon={<ExpandMoreIcon />}
         defaultExpandIcon={<ChevronRightIcon />}
+        height="30px"
+         sx = {{fontSize:"30px"}}
       >
-        <TreeItem nodeId="1" label="Introduction">
+        <TreeItem nodeId="1" label="Introduction" >
           <TreeItem nodeId="2" label="About the Course" />
+          <TreeItem nodeId="2" label="About the Course" />
+          <TreeItem nodeId="2" label="About the Course" />
+          <TreeItem nodeId="2" label="About the Course" />
+          <TreeItem nodeId="2" label="About the Course" />
+          <TreeItem nodeId="2" label="About the Course" />
+          <TreeItem nodeId="2" label="About the Course" />
+          
+        </TreeItem>
+        <TreeItem nodeId="3" label="redering">
+          <TreeItem nodeId="4" label="About the Course" />
+          <TreeItem nodeId="4" label="About the Course" />
+          <TreeItem nodeId="4" label="About the Course" />
+          <TreeItem nodeId="4" label="About the Course" />
+          <TreeItem nodeId="4" label="About the Course" />
+          <TreeItem nodeId="4" label="About the Course" />
+          <TreeItem nodeId="4" label="About the Course" />
+          
         </TreeItem>
       </TreeView>
-
     </Box>
     </>
   );
