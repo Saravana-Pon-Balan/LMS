@@ -5,6 +5,7 @@ import Saved from "./learnComponents/saved";
 import Subscribed from "./learnComponents/subscribed";
 import CourseList from "./learnComponents/Course/CourseList";
 import CourseDetails from "./learnComponents/Course/CourseDetails";
+import CourseContent from "./learnComponents/Course/CourseContent";
 
 const Router = () => {
   return (
@@ -14,6 +15,7 @@ const Router = () => {
       <Route path="/saved" element={<Saved />} />
       <Route path="/subscribed" element={<Subscribed />} />
       <Route path="/courses/:id" element={<CourseDetails />} />
+      <Route path="/courses/:id/:name" element={<CourseContent/>}/>
     </Routes>
   );
 };

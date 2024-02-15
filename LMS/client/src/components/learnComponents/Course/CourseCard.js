@@ -14,7 +14,7 @@ export default function CourseCard(props) {
     <Card 
     sx={{ margin:"20px",
     maxWidth: 380,
-    boxShadow: "13px 20px 42px 11px rgba(1,3,5,0.73)",
+    boxShadow: "3px 9px 6px 4px rgba(14, 14, 14, 0.48)",
     borderRadius:"10px"
     }}
     

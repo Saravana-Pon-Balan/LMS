@@ -6,17 +6,27 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import { TreeView } from '@mui/x-tree-view/TreeView';
 import { TreeItem } from '@mui/x-tree-view/TreeItem';
+import { Link } from 'react-router-dom';
 
 const CourseDetails = () => {
   const { id } = useParams();
+  const name = "WebDevelopment"
   return (
-    <>
+    <Box padding={"10px"}>
+    <Typography variant="h2" color="initial">
+      {name}
+    </Typography>
     <Box margin={"10px"} display={"flex"} maxHeight={"350px"}>
   <Box display={"flex"} flexDirection={"column"}>
     <img src={img} alt="Thumbnail" width={"350px"} height={"300px"} style={{borderRadius:"10px"}}/>
-    <Button variant="outlined" color="primary" height="60px" style={{marginTop:"20px"}}>
+    <Link to={`/courses/${id}/${name}`} > <Button 
+    variant="outlined" 
+    color="primary" 
+    height="60px" 
+
+    style={{marginTop:"20px",width:"100%"}}>
       Start
-    </Button>
+    </Button></Link>
   </Box>
   <Box
     padding={"20px"}
@@ -95,7 +105,7 @@ const CourseDetails = () => {
           <TreeItem nodeId="2" label="About the Course" />
           
         </TreeItem>
-        <TreeItem nodeId="3" label="redering">
+        <TreeItem nodeId="3" label="Tags">
           <TreeItem nodeId="4" label="About the Course" />
           <TreeItem nodeId="4" label="About the Course" />
           <TreeItem nodeId="4" label="About the Course" />
@@ -107,7 +117,7 @@ const CourseDetails = () => {
         </TreeItem>
       </TreeView>
     </Box>
-    </>
+    </Box>
   );
 };
 
