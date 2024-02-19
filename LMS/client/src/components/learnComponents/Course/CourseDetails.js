@@ -1,7 +1,7 @@
 import { Box, Button, Typography } from "@mui/material";
 import React from "react";
 import { useParams } from "react-router-dom";
-import img from "/home/saravana/project/LMS/client/src/components/learnComponents/Course/img/mui-react.avif";
+import img from "./img/mui-react.avif";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import { TreeView } from '@mui/x-tree-view/TreeView';
@@ -20,7 +20,7 @@ const CourseDetails = () => {
   <Box display={"flex"} flexDirection={"column"}>
     <img src={img} alt="Thumbnail" width={"350px"} height={"300px"} style={{borderRadius:"10px"}}/>
     <Link to={`/courses/${id}/${name}`} > <Button 
-    variant="outlined" 
+    variant="contained" 
     color="primary" 
     height="60px" 
 
@@ -32,34 +32,14 @@ const CourseDetails = () => {
     padding={"20px"}
     marginLeft={"20px"}
     border={"3px solid black"}
-    maxWidth={"60%"}
-    height={"100%"}
+    width={"900px"}
     style={{ overflowY: "scroll" }}
   >
     <Typography variant="h5" color="initial">
       Description
     </Typography>
     <Typography variant="body1" color="initial" style={{ maxHeight: "275px", overflowY: "scroll" }}>
-      Description widuwhedwul2irgelf iu r wfbifb fbweifbweifb bf b
-      iuhwefuwefwfbawfvbufvsadvhbdsjvbasjfbwI
-      Description widuwhedwul2irgelf iu r wfbifb fbweifbweifb bf b
-      iuhwefuwefwfbawfvbufvsadvhbdsjvbasjfbwIDescription widuwhedwul2irgelf iu r wfbifb fbweifbweifb bf b
-      iuhwefuwefwfbawfvbufvsadvhbdsjvbasjfbwIDescription widuwhedwul2irgelf iu r wfbifb fbweifbweifb bf b
-      iuhwefuwefwfbawfvbufvsadvhbdsjvbasjfbwIDescription widuwhedwul2irgelf iu r wfbifb fbweifbweifb bf b
-      iuhwefuwefwfbawfvbufvsadvhbdsjvbasjfbwIDescription widuwhedwul2irgelf iu r wfbifb fbweifbweifb bf b
-      iuhwefuwefwfbawfvbufvsadvhbdsjvbasjfbwIDescription widuwhedwul2irgelf iu r wfbifb fbweifbweifb bf b
-      iuhwefuwefwfbawfvbufvsadvhbdsjvbasjfbwIDescription widuwhedwul2irgelf iu r wfbifb fbweifbweifb bf b
-      iuhwefuwefwfbawfvbufvsadvhbdsjvbasjfbwIDescription widuwhedwul2irgelf iu r wfbifb fbweifbweifb bf b
-      iuhwefuwefwfbawfvbufvsadvhbdsjvbasjfbwIDescription widuwhedwul2irgelf iu r wfbifb fbweifbweifb bf b
-      iuhwefuwefwfbawfvbufvsadvhbdsjvbasjfbwIDescription widuwhedwul2irgelf iu r wfbifb fbweifbweifb bf b
-      iuhwefuwefwfbawfvbufvsadvhbdsjvbasjfbwIDescription widuwhedwul2irgelf iu r wfbifb fbweifbweifb bf b
-      iuhwefuwefwfbawfvbufvsadvhbdsjvbasjfbwIDescription widuwhedwul2irgelf iu r wfbifb fbweifbweifb bf b
-      iuhwefuwefwfbawfvbufvsadvhbdsjvbasjfbwIDescription widuwhedwul2irgelf iu r wfbifb fbweifbweifb bf b
-      iuhwefuwefwfbawfvbufvsadvhbdsjvbasjfbwIDescription widuwhedwul2irgelf iu r wfbifb fbweifbweifb bf b
-      iuhwefuwefwfbawfvbufvsadvhbdsjvbasjfbwIDescription widuwhedwul2irgelf iu r wfbifb fbweifbweifb bf b
-      iuhwefuwefwfbawfvbufvsadvhbdsjvbasjfbwIDescription widuwhedwul2irgelf iu r wfbifb fbweifbweifb bf b
-      iuhwefuwefwfbawfvbufvsadvhbdsjvbasjfbwIDescription widuwhedwul2irgelf iu r wfbifb fbweifbweifb bf b
-      iuhwefuwefwfbawfvbufvsadvhbdsjvbasjfbwI
+      Here you can learn Web Development form basic
     </Typography>
   </Box>
   <Box
@@ -73,13 +53,8 @@ const CourseDetails = () => {
       Publisher
     </Typography>
     <Typography variant="body1" color="initial" style={{ maxHeight: "275px", overflowY: "scroll" }}>
-      Description widuwhedwul2irgelf iu r wfbifb fbweifbweifb bf b
-      iuhwefuwefwfbawfvbufvsadvhbdsjvbasjfbwI
-      Description widuwhedwul2irgelf iu r wfbifb fbweifbweifb bf b
-      iuhwefuwefwfbawfvbufvsadvhbdsjvbasjfbwIDescription widuwhedwul2irgelf iu r wfbifb fbweifbweifb bf b
-      iuhwefuwefwfbawfvbufvsadvhbdsjvbasjfbwIDescription widuwhedwul2irgelf iu r wfbifb fbweifbweifb bf b
-      iuhwefuwefwfbawfvbufvsadvhbdsjvbasjfbwIDescription widuwhedwul2irgelf iu r wfbifb fbweifbweifb bf b
-      iuhwefuwefwfbawfvbufvsadvhbdsjvbasjfbwI
+      Author: abc
+      channel: xyz
     </Typography>
   </Box>
 </Box>

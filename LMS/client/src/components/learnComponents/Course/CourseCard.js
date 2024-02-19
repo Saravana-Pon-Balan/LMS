@@ -7,6 +7,7 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import img from "/home/saravana/project/LMS/client/src/components/learnComponents/Course/img/mui-react.avif";
 import { Link } from 'react-router-dom';
+
 export default function CourseCard(props) {
   const {id,title,description} = props;
   return (
@@ -34,7 +35,6 @@ export default function CourseCard(props) {
       </CardContent>
       <CardActions sx={{float:"right"}}>
         <Button size="medium" variant='outlined'>Share</Button>
-        <Button size="medium" variant='outlined'>Learn More</Button>
       </CardActions>
     </Card>
     </Link>

@@ -1,6 +1,5 @@
 import {  Link } from "react-router-dom";
 import OndemandVideoIcon from "@mui/icons-material/OndemandVideo";
-import WorkIcon from "@mui/icons-material/Work";
 import CodeIcon from "@mui/icons-material/Code";
 import SubscriptionsRoundedIcon from "@mui/icons-material/SubscriptionsRounded";
 import BookmarkIcon from "@mui/icons-material/Bookmark";
@@ -42,31 +41,7 @@ export default function SidebarItems(props) {
             </ListItemButton>
           </ListItem>
         </Link>
-        <Link to="/job" style={{ textDecoration: "none"}}>
-          
-          <ListItem disablePadding sx={{ display: "block" }}>
-            <ListItemButton
-              sx={{
-                minHeight: 48,
-                justifyContent: open ? "initial" : "center",
-                px: 2.5,
-                display:"flex",
-                maxWidth: open ?  "none": "60px !important",
-              }}
-            >
-              <ListItemIcon
-                sx={{
-                  minWidth: 0,
-                  mr: open ? 3 : "auto",
-                  justifyContent: "center",
-                }}
-              >
-                <WorkIcon />
-              </ListItemIcon>
-              <ListItemText primary={"Job"} sx={{ opacity: open ? 1 : 0 }} />
-            </ListItemButton>
-          </ListItem>
-        </Link>
+        
         <Link to="/playground" style={{ textDecoration: "none"}}>
           <ListItem disablePadding sx={{ display: "block" }}>
             <ListItemButton
