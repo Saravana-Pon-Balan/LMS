@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import CssBaseline from '@mui/material/CssBaseline';
 import Box from '@mui/material/Box';
 import Sidebar from './components/Sidebar';
@@ -16,19 +16,23 @@ const Container = styled.div`
   margin-top:5%;
 `
 const App = () => {
-  
+  const [open,setOpen] = useState(false);
+  const pull = (data)=>{
+    console.log(data)
+    setOpen(data)
+  }
   return (
-    <div>
+    <Box>
       <CssBaseline />
       <BrowserRouter>
         <Block>
-          <Sidebar />
+          <Sidebar SideBarState={pull} />
           <Container >
-          <Router  />
+          <Router  open={open} />
           </Container>
         </Block>
       </BrowserRouter>
-    </div>
+    </Box>
   );
 };
 

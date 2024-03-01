@@ -16,14 +16,13 @@ const CourseDetails = () => {
     <Typography variant="h2" color="initial">
       {name}
     </Typography>
-    <Box margin={"10px"} display={"flex"} maxHeight={"350px"}>
+    <Box margin={"10px"} display={"flex"} maxHeight={"350px"} width={"calc(100vw - 100px)"}>
   <Box display={"flex"} flexDirection={"column"}>
     <img src={img} alt="Thumbnail" width={"350px"} height={"300px"} style={{borderRadius:"10px"}}/>
     <Link to={`/courses/${id}/${name}`} > <Button 
     variant="contained" 
     color="primary" 
     height="60px" 
-
     style={{marginTop:"20px",width:"100%"}}>
       Start
     </Button></Link>
@@ -32,14 +31,19 @@ const CourseDetails = () => {
     padding={"20px"}
     marginLeft={"20px"}
     border={"3px solid black"}
-    width={"900px"}
-    style={{ overflowY: "scroll" }}
+    flex={"3"}
+   
   >
     <Typography variant="h5" color="initial">
       Description
     </Typography>
-    <Typography variant="body1" color="initial" style={{ maxHeight: "275px", overflowY: "scroll" }}>
+    <Typography variant="body1" color="initial"  style={{height:"94%", overflowY: "scroll" }}>
       Here you can learn Web Development form basic
+      Here you can learn Web Development form basic
+      Here you can learn Web Development form basic
+      Here you can learn Web Development form basicHere you can learn Web Development form basicHere you can learn Web Development form basicHere you can learn Web Development form basicHere you can learn Web Development form basicHere you can learn Web Development form basicHere you can learn Web Development form basicHere you can learn Web Development form basicHere you can learn Web Development form basicHere you can learn Web Development form basicHere you can learn Web Development form basicHere you can learn Web Development form basicHere you can learn Web Development form basicHere you can learn Web Development form basic
+      Here you can learn Web Development form basicHere you can learn Web Development form basicHere you can learn Web Development form basicHere you can learn Web Development form basicHere you can learn Web Development form basicHere you can learn Web Development form basicHere you can learn Web Development form basicHere you can learn Web Development form basicHere you can learn Web Development form basicHere you can learn Web Development form basicHere you can learn Web Development form basicHere you can learn Web Development form basicHere you can learn Web Development form basicHere you can learn Web Development form basic
+
     </Typography>
   </Box>
   <Box
@@ -52,12 +56,13 @@ const CourseDetails = () => {
     <Typography variant="h5" color="initial">
       Publisher
     </Typography>
-    <Typography variant="body1" color="initial" style={{ maxHeight: "275px", overflowY: "scroll" }}>
+    <Typography variant="body1" color="initial">
       Author: abc
       channel: xyz
     </Typography>
   </Box>
 </Box>
+
 
     <Box width={"100%"} border={"3px solid black"}>
       <Typography variant="h5">

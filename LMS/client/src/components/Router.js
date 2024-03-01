@@ -6,8 +6,10 @@ import Subscribed from "./learnComponents/subscribed";
 import CourseList from "./learnComponents/Course/CourseList";
 import CourseDetails from "./learnComponents/Course/CourseDetails";
 import CourseContent from "./learnComponents/Course/CourseContent";
-
-const Router = () => {
+import CreateCourse from "./learnComponents/Course/CreateCourse";
+import CourseCreation from "./learnComponents/Course/CourseCreation"
+const Router = (props) => {
+  const {open} = props;
   return (
     <Routes>
       <Route path="/" element={<CourseList />} />
@@ -15,7 +17,10 @@ const Router = () => {
       <Route path="/saved" element={<Saved />} />
       <Route path="/subscribed" element={<Subscribed />} />
       <Route path="/courses/:id" element={<CourseDetails />} />
-      <Route path="/courses/:id/:name" element={<CourseContent/>}/>
+      <Route path="/courses/:id/:name" element={<CourseContent open={open}/>}/>
+      <Route path="/createcourse" element={<CreateCourse/>} />
+      <Route path="/coursecreation" element={<CourseCreation/>} />
+
     </Routes>
   );
 };

@@ -1,4 +1,5 @@
 import * as React from "react";
+import {  Link } from "react-router-dom";
 import MoreIcon from "@mui/icons-material/MoreVert";
 import Box from "@mui/material/Box";
 import MailIcon from "@mui/icons-material/Mail";
@@ -11,6 +12,7 @@ import IconButton from "@mui/material/IconButton";
 import ChatIcon from '@mui/icons-material/Chat';
 import HomeIcon from '@mui/icons-material/Home';
 import PeopleIcon from '@mui/icons-material/People';
+import AddIcon from '@mui/icons-material/Add';
 
 export default function NavItems() {
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -75,6 +77,14 @@ export default function NavItems() {
       open={isMobileMenuOpen}
       onClose={handleMobileMenuClose}
     >
+    <Link to="/createcourse" style={{ textDecoration: "none" }}>
+        <MenuItem>
+        <IconButton size="large" aria-label="show 4 new mails" color="inherit">
+            <AddIcon />
+        </IconButton>
+        <p>Add Course</p>
+      </MenuItem>
+    </Link>
       <MenuItem>
         <IconButton size="large" aria-label="show 4 new mails" color="inherit">
           <Badge badgeContent={4} color="error">
@@ -130,6 +140,11 @@ export default function NavItems() {
     <>
       <Box sx={{ flexGrow: 1 }} />
       <Box sx={{ display: { xs: "none", md: "flex" },gap:"30px" }}>
+       <Link to="/createcourse" style={{ textDecoration: "none",color:"white" }}>
+        <IconButton size="large" aria-label="show 4 new mails" color="inherit">
+            <AddIcon />
+        </IconButton>
+        </Link>
       <IconButton size="large" aria-label="show 4 new mails" color="inherit">
           <Badge badgeContent={5} color="error">
             <HomeIcon />

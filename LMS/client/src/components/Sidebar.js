@@ -79,13 +79,13 @@ const Drawer = styled(MuiDrawer, {
   }),
 }));
 
-export default function SideBar() {
+export default function SideBar(props) {
   const [open, setOpen] = React.useState(false);
 
   const handleDrawerToggle = () => {
     setOpen(!open);
   };
-
+  props.SideBarState(open);
   return (
     <Box sx={{ display: "flex"}}>
       <CssBaseline />
