@@ -11,7 +11,6 @@ dbconn()
   app.listen(PORT);
   console.log(`Server started on Port ${PORT}`);
   router(app);
-  console.log(await db.connection.listCollections());
 
 
 }).catch((error) => console.error(`Unable to start the server`, error));

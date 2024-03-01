@@ -1,12 +1,8 @@
 const Controller = require("./app/Controller/controller");
 const router = (app) =>{
-    app.get('/',(req,res) => {
-        
-        console.log();
-        res.send("hello")
-        
-    })
-    app.post('/',Controller.createUser)
+
+    app.post('/',Controller.createUser);
+    app.get('/searchuser',Controller.searchUser);
 };
 
 module.exports = router;
