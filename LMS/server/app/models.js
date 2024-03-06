@@ -1,21 +1,21 @@
 const mongoose = require('mongoose');
-const schema = mongoose.Schema;
-const UserModel = new schema({
+const Schema = mongoose.Schema;
+
+const userSchema = new Schema({
     name: { type: String, default: '' },
-    email: { type: String, default: '' },
+    email: { type: String, unique:true, required:true },
     profilePic: { type: String, default: '' },
 });
 
-UserModel.method({
+userSchema.method({
     saveData: async function () {
-        return this.save()
+        return this.save();
     }
 });
 
-
-const Course = new schema(
+const courseSchema = new Schema(
     {
-        titile : {type:String,required:true},
+        title : {type:String, required:true},
         description : {type:String},
         creator : {type:String},
         contents : [
@@ -38,21 +38,20 @@ const Course = new schema(
     }
 );
 
-const Code = schema({
+const codeSchema = new Schema({
     userId: { type:String},
     file : {
         file_name:{type:String},
         path:{type:String},
         file_type:{type:String},
         created_at: {type: Date, default: Date.now }
-
     }
-})
+});
+
 const Models = {
-     UserModel : mongoose.model('UserData', UserModel),
-     Course : mongoose.model('Course',Course),
-     Code : mongoose.model('Code',Code)
-
-
+    userModel: mongoose.model('UserData', userSchema),
+    courseModel: mongoose.model('CourseData', courseSchema),
+    codeModel: mongoose.model('CodeData', codeSchema)
 };
+
 module.exports = Models;
