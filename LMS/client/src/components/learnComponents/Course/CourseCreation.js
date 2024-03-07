@@ -1,161 +1,144 @@
-import { TreeItem, TreeView } from "@mui/x-tree-view";
 import React, { useState } from 'react';
-import {
-  Container,
-  TextField,
-  Button,
-  IconButton,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-} from '@mui/material';
-import { ExpandMore as ExpandMoreIcon, ChevronRight as ChevronRightIcon, Add as AddIcon } from '@mui/icons-material';
+import { Container, Typography, Box, TextField, Button, Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
+import { TreeItem, TreeView } from "@mui/x-tree-view";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import { useParams } from "react-router-dom";
 
 function CourseCreationPage() {
-  const [treeItems, setTreeItems] = useState([
+  const { name } = useParams();
+  const [fileName, setFileName] = useState("");
+  const [videoInput, setVideoInput] = useState(null);
+  const [caption, setCaption] = useState("");
+  const [courseStructure, setCourseStructure] = useState([
     {
-      id: '1',
-      label: 'Introduction',
+      title: 'HTML Course',
       children: [
-        { id: '2', label: 'About the Course' }
-      ],
-    },
-  ]);
-  const [openAddDialog, setOpenAddDialog] = useState(false);
-  const [openAddFileDialog, setOpenAddFileDialog] = useState(false);
-  const [selectedNodeId, setSelectedNodeId] = useState(null);
+        "base"
+      ]
+    }
+]);
+  const [openAddDirectoryDialog, setOpenAddDirectoryDialog] = useState(false);
+  const [newDirectoryName, setNewDirectoryName] = useState("");
 
-  const handleAddDirectory = () => {
-    setOpenAddDialog(true);
-  };
+  const renderTree = (nodes) =>
+  nodes.map((node,key) => {
+    if (typeof node === 'string') {
+      return (
+        <TreeItem key={key} nodeId={node} label={node}>
+          {/* No children to render for strings */}
+        </TreeItem>
+      );
+    } else {
+      return (
+        <TreeItem key={node.title} nodeId={node.title} label={node.title}>
+          {Array.isArray(node.children) && node.children.length > 0
+            ? node.children.map((childNode) => renderTree([childNode]))
+            : null}
+        </TreeItem>
+      );
+    }
+  });
+
+
+
+  const handleSaveDirectory = () => {
+      setCourseStructure((prev)=>[...prev,{title:newDirectoryName,children:[]}])
+      setOpenAddDirectoryDialog(false)
+      setNewDirectoryName("")
+  }
 
   const handleAddFile = () => {
-    setOpenAddFileDialog(true);
-  };
+    const updatedCourseStructure = [...courseStructure]; // Make a copy of the state
+    const lastIndex = updatedCourseStructure.length - 1; // Get the index of the last item
+    updatedCourseStructure[lastIndex].children.push(fileName); // Push the new file name
+    setCourseStructure(updatedCourseStructure); 
+    setFileName("")
+    setVideoInput(null)
+    setCaption("")
+  }
+const handleAddDirectoryClose=()=>{
 
-  const handleAddFileConfirm = () => {
-    if (!selectedNodeId) {
-      alert("Please select a directory to add a file.");
-      return;
-    }
-    const newId = (Math.random() * 100000).toString(); // generate unique ID
-    const newFile = {
-      id: newId,
-      label: 'New File',
-    };
-    const updatedTreeItems = treeItems.map(node => {
-      if (node.id === selectedNodeId) {
-        return { ...node, children: [...node.children, newFile] };
-      }
-      return node;
-    });
-    setTreeItems(updatedTreeItems);
-    setOpenAddFileDialog(false);
-  };
-
-  const handleAddDirectoryConfirm = (name) => {
-    const newId = (Math.random() * 100000).toString(); // generate unique ID
-    const newDirectory = {
-      id: newId,
-      label: name,
-      children: [],
-    };
-    setTreeItems([...treeItems, newDirectory]);
-    setOpenAddDialog(false);
-  };
-
-  const handleAddDialogClose = () => {
-    setOpenAddDialog(false);
-    setOpenAddFileDialog(false);
-  };
+}
 
   return (
-    <Container maxWidth="lg" sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-      <div>
-        <h2>Add Video or Text</h2>
-        <TextField
-          label="Video URL"
-          fullWidth
-          margin="normal"
-        />
-        <TextField
-          label="Text Content"
-          fullWidth
-          multiline
-          rows={4}
-          margin="normal"
-        />
-        <Button variant="contained" color="primary" onClick={handleAddDirectory}>
-        <AddIcon />
-        Add Directory
-      </Button>
+    <Container maxWidth="lg">
+      <Typography variant="h4" gutterBottom>
+        {name}
+      </Typography>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+        <Box>
+          
+          <TextField
+            margin="dense"
+            id="fileName"
+            label="File Name"
+            fullWidth
+            variant="standard"
+            value={fileName}
+            required
+            onChange={(e) => setFileName(e.target.value)}
+          />
+          <TextField
+            margin="dense"
+            id="videoInput"
+            label="Video Input"
+            type="file"
+            fullWidth
+            variant="standard"
+            value={videoInput}
+            onChange={(e) => setVideoInput(e.target.value)}
+          />
+          <TextField
+            margin="dense"
+            id="caption"
+            label="Caption"
+            fullWidth
+            variant="standard"
+            value={caption}
+            onChange={(e) => setCaption(e.target.value)}
+          />
+          <Button variant="contained" color="primary" onClick={handleAddFile}>
+            Add File
+          </Button>
+          <Button variant="contained" color="primary" onClick={() => setOpenAddDirectoryDialog(true)} style={{ marginLeft: '10px' }}>
+            Add Directory
+          </Button>
+        </Box>
+        <Box sx={{ width: '50%' }}>
+            <Typography variant="h4" gutterBottom>
+            Course Structure
+          </Typography>
+          <TreeView
+            defaultCollapseIcon={<ExpandMoreIcon />}
+            defaultExpandIcon={<ChevronRightIcon />}
+          >
+            {renderTree(courseStructure)}
+          </TreeView>
+        </Box>
+      </Box>
 
-      <Button variant="contained" color="primary" onClick={handleAddFile}>
-        <AddIcon />
-        Add File
-      </Button>
-
-        {/* Add Directory Dialog */}
-        <Dialog open={openAddDialog} onClose={handleAddDialogClose}>
+      <Dialog open={openAddDirectoryDialog} onClose={handleAddDirectoryClose}>
         <DialogTitle>Add Directory</DialogTitle>
         <DialogContent>
           <TextField
             autoFocus
             margin="dense"
-            id="name"
+            id="directoryName"
             label="Directory Name"
             fullWidth
             variant="standard"
-            onChange={(e) => setSelectedNodeId(e.target.value)}
+            value={newDirectoryName}
+            onChange={(e) => setNewDirectoryName(e.target.value)}
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleAddDialogClose}>Cancel</Button>
-          <Button onClick={() => handleAddDirectoryConfirm(selectedNodeId)} color="primary">Add</Button>
+          <Button onClick={()=>setOpenAddDirectoryDialog(false)}>Cancel</Button>
+          <Button onClick={handleSaveDirectory} color="primary">Save</Button>
         </DialogActions>
       </Dialog>
-
-      <Dialog open={openAddFileDialog} onClose={handleAddDialogClose}>
-        <DialogTitle>Add File</DialogTitle>
-        <DialogContent>
-          <TextField
-            autoFocus
-            margin="dense"
-            id="file"
-            label="File Name"
-            fullWidth
-            variant="standard"
-            onChange={(e) => setSelectedNodeId(e.target.value)}
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleAddDialogClose}>Cancel</Button>
-          <Button onClick={handleAddFileConfirm} color="primary">Add</Button>
-        </DialogActions>
-      </Dialog>
-      </div>
-
-      <div>
-        <h2>Course Structure</h2>
-        <TreeView
-          aria-label="file system navigator"
-          defaultCollapseIcon={<ExpandMoreIcon />}
-          defaultExpandIcon={<ChevronRightIcon />}
-        >
-          {treeItems.map((node) => (
-            <TreeItem key={node.id} nodeId={node.id} label={node.label}>
-              {node.children.map((child) => (
-                <TreeItem key={child.id} nodeId={child.id} label={child.label} />
-              ))}
-            </TreeItem>
-          ))}
-        </TreeView>
-      </div>
     </Container>
   );
 }
 
 export default CourseCreationPage;
-
-

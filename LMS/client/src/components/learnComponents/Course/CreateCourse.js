@@ -31,7 +31,7 @@ function CourseCreation() {
         value={courseDescription}
         onChange={(e) => setCourseDescription(e.target.value)}
       />
-      <Link to="/coursecreation" style={{ textDecoration: "none",color:"white" }}>
+      <Link to={`/coursecreation/${courseName}`} style={{ textDecoration: "none",color:"white" }}>
       <Button variant="contained" color="primary" onClick={handleCreateCourse}>
         Create Course
       </Button>

@@ -9,9 +9,10 @@ const CourseModel = Models.courseModel;
 const CodeModel = Models.codeModel;
 
 
+
 const storage = multer.diskStorage({
   destination: function(req, file, cb) {
-    const destinationDir = path.join(__dirname, 'app', 'Course');
+    const destinationDir = path.join(__dirname,'Course');
     // Ensure the destination directory exists, if not create it
     if (!fs.existsSync(destinationDir)) {
       fs.mkdirSync(destinationDir, { recursive: true });
