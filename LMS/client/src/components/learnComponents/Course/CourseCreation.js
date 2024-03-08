@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
-import { Container, Typography, Box, TextField, Button, Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
+import { Container, Typography, Box, TextField,TextareaAutosize, Button, Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
 import { TreeItem, TreeView } from "@mui/x-tree-view";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import { useParams } from "react-router-dom";
+import axios from "axios";
 
 function CourseCreationPage() {
-  const { name } = useParams();
+  const { id,name } = useParams();
   const [fileName, setFileName] = useState("");
   const [videoInput, setVideoInput] = useState(null);
   const [caption, setCaption] = useState("");
@@ -20,7 +21,7 @@ function CourseCreationPage() {
 ]);
   const [openAddDirectoryDialog, setOpenAddDirectoryDialog] = useState(false);
   const [newDirectoryName, setNewDirectoryName] = useState("");
-
+  
   const renderTree = (nodes) =>
   nodes.map((node,key) => {
     if (typeof node === 'string') {
@@ -45,14 +46,29 @@ function CourseCreationPage() {
   const handleSaveDirectory = () => {
       setCourseStructure((prev)=>[...prev,{title:newDirectoryName,children:[]}])
       setOpenAddDirectoryDialog(false)
+      
+      const data = {
+        courseId :id,
+        directory:newDirectoryName
+      }
+      axios.post("http://localhost:3001/add-directory",data)
       setNewDirectoryName("")
   }
 
   const handleAddFile = () => {
-    const updatedCourseStructure = [...courseStructure]; // Make a copy of the state
-    const lastIndex = updatedCourseStructure.length - 1; // Get the index of the last item
-    updatedCourseStructure[lastIndex].children.push(fileName); // Push the new file name
+    const updatedCourseStructure = [...courseStructure]; 
+    const lastIndex = updatedCourseStructure.length - 1; 
+    updatedCourseStructure[lastIndex].children.push(fileName); 
     setCourseStructure(updatedCourseStructure); 
+    console.log(videoInput);
+    const data = {
+      courseId :id,
+      name:fileName,
+      media:videoInput,
+      cp:caption
+    }
+    axios.post("http://localhost:3001/add-file",data)
+    
     setFileName("")
     setVideoInput(null)
     setCaption("")
@@ -62,7 +78,7 @@ const handleAddDirectoryClose=()=>{
 }
 
   return (
-    <Container maxWidth="lg">
+    <Container maxWidth="lg" width="100%">
       <Typography variant="h4" gutterBottom>
         {name}
       </Typography>
@@ -87,16 +103,20 @@ const handleAddDirectoryClose=()=>{
             fullWidth
             variant="standard"
             value={videoInput}
-            onChange={(e) => setVideoInput(e.target.value)}
+            onChange={(e) => setVideoInput(e.target.files[0])}
           />
-          <TextField
+          <TextareaAutosize
             margin="dense"
             id="caption"
             label="Caption"
             fullWidth
+            maxRows={"10"}
+            minRows={"10"}
             variant="standard"
+            placeholder="Enter Caption here..."
             value={caption}
             onChange={(e) => setCaption(e.target.value)}
+            style={{width:"100%"}}
           />
           <Button variant="contained" color="primary" onClick={handleAddFile}>
             Add File

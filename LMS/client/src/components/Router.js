@@ -19,7 +19,7 @@ const Router = (props) => {
       <Route path="/courses/:id" element={<CourseDetails />} />
       <Route path="/courses/:id/:name" element={<CourseContent open={open}/>}/>
       <Route path="/createcourse" element={<CreateCourse/>} />
-      <Route path="/coursecreation/:name" element={<CourseCreation/>} />
+      <Route path="/coursecreation/:id/:name" element={<CourseCreation/>} />
 
     </Routes>
   );

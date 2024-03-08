@@ -1,15 +1,36 @@
-import React, { useState } from 'react';
-import {  Link } from "react-router-dom";
-
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import { Container, TextField, Button } from '@mui/material';
 
 function CourseCreation() {
   const [courseName, setCourseName] = useState('');
   const [courseDescription, setCourseDescription] = useState('');
+  const [id, setId] = useState('');
+  const navigate = useNavigate()
 
-  const handleCreateCourse = () => {
-    // Handle course creation logic here
-    console.log('Creating course:', { courseName, courseDescription });
+  useEffect(() => {
+    if (id) {
+      console.log("Uploaded with ID:", id);
+      // Navigate to the new route after id is updated
+      navigate(`/coursecreation/${id}/${courseName}`);
+    }
+  }, [id]);
+
+
+  const createCourse = async() => {
+    const data = {
+      title: courseName,
+      description: courseDescription
+    }
+    await axios
+      .post("http://localhost:3001/upload-course", data)
+      .then(upload => {
+        console.log(upload.data);
+        const Id = upload.data;
+        setId(Id);
+      })
+      .catch(error => console.log(error));
   };
 
   return (
@@ -31,11 +52,9 @@ function CourseCreation() {
         value={courseDescription}
         onChange={(e) => setCourseDescription(e.target.value)}
       />
-      <Link to={`/coursecreation/${courseName}`} style={{ textDecoration: "none",color:"white" }}>
-      <Button variant="contained" color="primary" onClick={handleCreateCourse}>
+      <Button variant="contained" color="primary" onClick={createCourse}>
         Create Course
       </Button>
-      </Link>
     </Container>
   );
 }

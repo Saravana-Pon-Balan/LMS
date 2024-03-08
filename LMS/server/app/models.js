@@ -24,7 +24,8 @@ const courseSchema = new Schema(
                 files : [
                     {
                         file_name:{type:String},
-                        path:{type:String},
+                        media_path:{type:String},
+                        caption:{type:String},
                         discussion : [
                             {
                                 user_name:{type:String},
@@ -37,6 +38,11 @@ const courseSchema = new Schema(
         ]
     }
 );
+courseSchema.method({
+    saveData: async function () {
+        return this.save();
+    }
+});
 
 const codeSchema = new Schema({
     userId: { type:String},
