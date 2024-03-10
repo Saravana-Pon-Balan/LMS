@@ -8,8 +8,6 @@ const UserModel = Models.userModel;
 const CourseModel = Models.courseModel;
 const CodeModel = Models.codeModel;
 
-
-
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     const destinationDir = path.join(__dirname, 'Course');
@@ -25,7 +23,6 @@ const storage = multer.diskStorage({
 });
 
 const upload = multer({ storage: storage });
-
 
 module.exports = {
   createUser: async (req, res) => {
@@ -63,9 +60,6 @@ module.exports = {
       console.error(error);
       res.status(500).send("Error occurred while saving course.");
     }
-
-    console.log(title, description);
-
   },
   addDirectory: async (req, res) => {
     try {
@@ -91,8 +85,8 @@ module.exports = {
   },
   addFile: async (req, res) => {
     try {
-      const { courseId, name, cp } = req.body;
-      const mediaPath = req.file ? req.file.path : null; // Get the path of the uploaded file if it exists
+      const { courseId, name, cp,quiz } = req.body;
+      const mediaPath = req.file ? req.file.path : null; 
       if (!mediaPath) {
         return res.status(400).send('No file uploaded');
       }
@@ -102,12 +96,32 @@ module.exports = {
         return res.status(404).send("Course not found");
       }
     
-      n = course.contents.length;
-      course.contents[n-1].files.push({ 
+      const n = course.contents.length;
+      if (n > 0) {
+      course.contents[n-1].files.push({
         file_name: name,
-        media_path: mediaPath, // Save the path of the uploaded file
-        caption: cp
+        media_path: mediaPath, 
+        caption: cp,
+        quizes: [{
+          question: quiz.question,
+          correct_option: quiz.correctOption,
+          options: quiz.options
+        }]
       });
+    }
+    else{
+      course.contents[0].files.push({
+        file_name: name,
+        media_path: mediaPath, 
+        caption: cp,
+        quizes: [{
+          question: quiz.question,
+          correct_option: quiz.correctOption,
+          options: quiz.options 
+        }]
+      });
+    }
+      
 
       await course.save();
 

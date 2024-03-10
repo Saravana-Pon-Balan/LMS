@@ -24,7 +24,7 @@ function CourseCreation() {
       description: courseDescription
     }
     await axios
-      .post("http://localhost:3001/upload-course", data)
+      .post("http://localhost:3001/upload_course", data)
       .then(upload => {
         console.log(upload.data);
         const Id = upload.data;

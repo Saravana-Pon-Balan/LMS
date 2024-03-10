@@ -26,6 +26,13 @@ const courseSchema = new Schema(
                         file_name:{type:String},
                         media_path:{type:String},
                         caption:{type:String},
+                        quizes:[
+                            {
+                            question:{type:String},
+                            correct_option:{type:String},
+                            options:[ ]
+                            }
+                        ],
                         discussion : [
                             {
                                 user_name:{type:String},

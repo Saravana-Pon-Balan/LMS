@@ -8,11 +8,15 @@ import CourseDetails from "./learnComponents/Course/CourseDetails";
 import CourseContent from "./learnComponents/Course/CourseContent";
 import CreateCourse from "./learnComponents/Course/CreateCourse";
 import CourseCreation from "./learnComponents/Course/CourseCreation"
+import Login from "./signup/login";
+import SignUp from "./signup/SignupPage";
 const Router = (props) => {
   const {open} = props;
   return (
     <Routes>
       <Route path="/" element={<CourseList />} />
+      <Route path="/signup" element={<SignUp />} />
+      <Route path="/login" element={<Login />} />
       <Route path="/playground" element={<Code />} />
       <Route path="/saved" element={<Saved />} />
       <Route path="/subscribed" element={<Subscribed />} />

@@ -1,11 +1,11 @@
 const Controller = require("./app/Controller/controller");
 const router = (app) =>{
 
-    app.post('/',Controller.createUser);
-    app.get('/search-user',Controller.searchUser);
-    app.post('/upload-course', Controller.uploadFiles,Controller.createCourse);
-    app.post('/add-directory',Controller.addDirectory);
-    app.post('/add-file',Controller.uploadFiles,Controller.addFile);
+    app.post('/create_user',Controller.createUser);
+    app.get('/search_user',Controller.searchUser);
+    app.post('/upload_course', Controller.uploadFiles,Controller.createCourse);
+    app.post('/add_directory',Controller.addDirectory);
+    app.post('/add_file',Controller.uploadFiles,Controller.addFile);
 
 
 };
