@@ -12,7 +12,6 @@ function CourseCreation() {
   useEffect(() => {
     if (id) {
       console.log("Uploaded with ID:", id);
-      // Navigate to the new route after id is updated
       navigate(`/coursecreation/${id}/${courseName}`);
     }
   }, [id]);

@@ -1,8 +1,12 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Grid } from '@mui/material';
 import CourseCard from './CourseCard';
 import courses from "./Courses";
 const CourseList = () => {
+  useEffect(()=>{
+    
+  })
+
   return (
     <Grid container spacing={2} sx={{maxWidth:"100vw",display: "flex",overflowY: "scroll",position:"relative"}}>
       {courses.map((course) => (

@@ -1,57 +1,53 @@
 import React, { useState } from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import CssBaseline from '@mui/material/CssBaseline';
 import Box from '@mui/material/Box';
 import Sidebar from './components/Sidebar';
 import Router from "./components/Router";
+import { BrowserRouter } from 'react-router-dom';
 import styled from '@emotion/styled';
-import Login from "./components/signup/login";
 import cookieManager from './manager/cookieManager';
-import SignUp from './components/signup/SignupPage';
 
-const userData = cookieManager.getUserInfo();
 const Block = styled.div`
-  display:flex;
-  flex-direction:column;
-  background-color:;
+  display: flex;
+  flex-direction: column;
+  background-color: #fff; 
 `;
+
 const Container = styled.div`
-  position:relative;
-  margin-top:5%;
-`
+position:relative;
+margin-left:5%;
 
-const App = () => {
+`;
+
+const App = (props) => {
   const [open, setOpen] = useState(false);
-
+  const userData = cookieManager.getUserInfo();
+  
   const pull = (data) => {
     setOpen(data);
-  }
+  };
 
   return (
-    <BrowserRouter>
+    <BrowserRouter> 
       <Box>
         <CssBaseline />
-        <Routes>
+        <Block>
           {userData ? (
-            <Route path="/" element={<AuthenticatedApp open={open} pull={pull} />} />
+            <>
+              <Sidebar SideBarState={pull} />
+              <Container>
+                <Router open={open} />
+              </Container>
+            </>
           ) : (
-            <Route path="/" element={<Navigate to="/login" />} />
+            <Container>
+              <Router open={open} />
+            </Container>
           )}
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<SignUp/>} />
-        </Routes>
+        </Block>
       </Box>
     </BrowserRouter>
   );
 };
-
-const AuthenticatedApp = ({ open, pull }) => (
-  <Block>
-    <Sidebar SideBarState={pull} />
-    <Container>
-      <Router open={open} />
-    </Container>
-  </Block>
-);
 
 export default App;

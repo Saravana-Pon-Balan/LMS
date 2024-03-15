@@ -8,7 +8,7 @@ const setUserInfo = (userInfo)=>{
 };
 const getUserInfo = () =>{
     return cookies.get("userInfo");
-};
+}
 const cookieManager = {
     setUserInfo,
     getUserInfo,

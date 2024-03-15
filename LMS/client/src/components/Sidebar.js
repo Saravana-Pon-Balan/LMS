@@ -87,7 +87,7 @@ export default function SideBar(props) {
   };
   props.SideBarState(open);
   return (
-    <Box sx={{ display: "flex"}}>
+    <Box sx={{ display: "flex",marginBottom:"-600px"}}>
       <CssBaseline />
       <Box>
         <AppBar position="fixed">

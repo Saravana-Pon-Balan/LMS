@@ -40,7 +40,9 @@ module.exports = {
   searchUser: async (req, res) => {
     const requestData = req.body;
     try {
-      const userInfo = await UserModel.find({ name: requestData.name });
+      console.log(requestData)
+      const userInfo = await UserModel.find({ email: requestData.email });
+      console.log(userInfo)
       res.send(userInfo);
     } catch (error) {
       console.error(error);
@@ -134,5 +136,11 @@ module.exports = {
     }
   },
 
-  uploadFiles: upload.single("media")
+  uploadFiles: upload.single("media"),
+
+  courseList : async(req,res)=>{
+    console.log("list")
+  }
+
+
 };
