@@ -5,6 +5,7 @@ const path = require('path');
 const fs = require('fs');
 const mongoose  = require("mongoose");
 const Axios = require("axios"); 
+const { log } = require("console");
 
 
 const UserModel = Models.userModel;
@@ -272,7 +273,13 @@ module.exports = {
             console.log(error); 
         }); 
   },
-  saveCode :(req,res)=>{
-      console.log("hi");
+  saveCode :async (req,res)=>{
+      const requestData = req.body
+      console.log(req.body.userId);
+      const codeObj = new CodeModel(requestData)
+
+      codeObj.saveData()
+      res.send("code saved")
+      console.log("saved");
   }
 };

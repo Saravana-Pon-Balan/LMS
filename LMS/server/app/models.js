@@ -61,9 +61,13 @@ const codeSchema = new Schema({
     created_at: {type: Date, default: Date.now }
 
 });
-
+codeSchema.method({
+    saveData: async function () {
+        return this.save();
+    }
+});
 const postSchema = new Schema({
-    userId : {type:String},
+    userId : {type:String,default:""},
     postContent : {type:String},
     postMedia: {type:String},
     like: {type:Number},

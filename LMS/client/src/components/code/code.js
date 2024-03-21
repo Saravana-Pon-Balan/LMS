@@ -2,11 +2,12 @@
 import React, { useState } from 'react';
 import Editor from "@monaco-editor/react";
 import Navbar from './nav';
-
 import axios from 'axios';
 import spinner from './spinner.gif';
 import { Box, Button, TextareaAutosize } from '@mui/material';
 import cookieManager from "../../manager/cookieManager";
+
+
 function Code() {
     // State variables
     const [userCode, setUserCode] = useState('');
@@ -14,6 +15,7 @@ function Code() {
     const [userOutput, setUserOutput] = useState('');
     const [loading, setLoading] = useState(false);
 	const userid = cookieManager.getUserInfo();
+    console.log(userid)
     // State variables for editor
     const [userLang, setUserLang] = useState("python");
     const [userTheme, setUserTheme] = useState("vs-dark");

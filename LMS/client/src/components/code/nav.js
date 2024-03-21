@@ -1,5 +1,5 @@
 // Navbar.js
-import { Button, TextField } from '@mui/material';
+import { Button, TextField,Box } from '@mui/material';
 import React from 'react';
 import Select from 'react-select';
 
@@ -44,7 +44,7 @@ const Navbar = ({ userLang, setUserLang, userTheme, setUserTheme, fontSize, setF
     ];
 
     return (
-        <div style={navbarStyles}>
+        <Box style={navbarStyles}>
             <h1>Code Craft</h1>
             <Select
                 options={languages}
@@ -61,7 +61,7 @@ const Navbar = ({ userLang, setUserLang, userTheme, setUserTheme, fontSize, setF
                 style={selectContainerStyles}
             />
             <label>Font Size</label>
-            <input
+            <TextField
                 type="range"
                 min="18"
                 max="30"
@@ -85,7 +85,7 @@ const Navbar = ({ userLang, setUserLang, userTheme, setUserTheme, fontSize, setF
 			<Button onClick={Save}>
                 SaveToDB
             </Button>
-        </div>
+        </Box>
     )
 }
 
