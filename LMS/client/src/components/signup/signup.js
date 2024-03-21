@@ -10,6 +10,7 @@ import Box from '@mui/material/Box';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import cookieManager from "../../manager/cookieManager";
+import { jwtDecode } from "jwt-decode";
 
 const SignUp = () => {
   const [name, setName] = useState("");
@@ -18,11 +19,12 @@ const SignUp = () => {
   const navigate = useNavigate();
 
   const responseGoogle = async (response) => {
-    const { gemail, gname, gpicture } = response.credential;
+    const { email, name, picture } = jwtDecode(response.credential);
+    console.log(email)
     await axios.post("http://localhost:3001/create_user", {
-      email: gemail,
-      name: gname,
-      profilePic: gpicture,
+      email: email,
+      name: name,
+      profilePic: picture,
     }).then((res) => {
       // Set user information using response data
       const userData = res.data;

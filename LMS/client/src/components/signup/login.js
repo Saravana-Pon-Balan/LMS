@@ -20,14 +20,14 @@ const Login = () => {
   const navigate = useNavigate();
 
   const responseGoogle = async (response) => {
-    const { email: gemail } = jwtDecode(response.credential);
-    console.log("email" + gemail);
+    const { email } = jwtDecode(response.credential);
     
       await axios.post("http://localhost:3001/search_user", {
-        email: gemail,
+        email: email,
       }).then((res)=>{
-      const userData = res.data; // Assuming the response contains user data
+      const userData = res.email; 
       cookieManager.setUserInfo(email);
+      navigate('/');
     }).catch ((err)=> {
       console.log(err);
     })

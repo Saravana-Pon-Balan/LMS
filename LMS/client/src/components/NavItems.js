@@ -145,21 +145,28 @@ export default function NavItems() {
             <AddIcon />
         </IconButton>
         </Link>
+      <Link to="/feed" style={{ textDecoration: "none",color:"white" }}>
       <IconButton size="large" aria-label="show 4 new mails" color="inherit">
           <Badge badgeContent={5} color="error">
             <HomeIcon />
           </Badge>
         </IconButton>
+        </Link>
+        <Link to="/network" style={{ textDecoration: "none",color:"white" }}>
         <IconButton size="large" aria-label="show 4 new mails" color="inherit">
           <Badge badgeContent={5} color="error">
             <PeopleIcon />
           </Badge>
         </IconButton>
+        </Link>
+        <Link to="/message" style={{ textDecoration: "none",color:"white" }}>
         <IconButton size="large" aria-label="show 4 new mails" color="inherit">
           <Badge badgeContent={5} color="error">
             <ChatIcon />
           </Badge>
         </IconButton>
+        </Link>
+        <Link to="/notification" style={{ textDecoration: "none",color:"white" }}>
         <IconButton
           size="large"
           aria-label="show 17 new notifications"
@@ -169,6 +176,7 @@ export default function NavItems() {
             <NotificationsIcon />
           </Badge>
         </IconButton>
+        </Link>
         <IconButton
           size="large"
           edge="end"

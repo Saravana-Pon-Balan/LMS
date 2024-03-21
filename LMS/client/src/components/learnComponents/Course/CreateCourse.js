@@ -7,6 +7,8 @@ function CourseCreation() {
   const [courseName, setCourseName] = useState('');
   const [courseDescription, setCourseDescription] = useState('');
   const [id, setId] = useState('');
+  const [image, setImage] = useState(null);
+
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -17,20 +19,28 @@ function CourseCreation() {
   }, [id]);
 
 
-  const createCourse = async() => {
-    const data = {
-      title: courseName,
-      description: courseDescription
+  const createCourse = async () => {
+    const formData = new FormData();
+    formData.append("title", courseName);
+    formData.append("description", courseDescription);
+    formData.append("media", image); 
+  
+    try {
+      const response = await axios.post("http://localhost:3001/upload_course", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      console.log(response.data);
+      const courseId = response.data;
+      setId(courseId);
+    } catch (error) {
+      console.error(error);
     }
-    await axios
-      .post("http://localhost:3001/upload_course", data)
-      .then(upload => {
-        console.log(upload.data);
-        const Id = upload.data;
-        setId(Id);
-      })
-      .catch(error => console.log(error));
   };
+  
+  
+  
 
   return (
     <Container maxWidth="sm">
@@ -50,6 +60,15 @@ function CourseCreation() {
         margin="normal"
         value={courseDescription}
         onChange={(e) => setCourseDescription(e.target.value)}
+      />
+      <TextField
+        margin="dense"
+        id="videoInput"
+        label="thumbnail"
+        type="file"
+        fullWidth
+        variant="standard"
+        onChange={(e) => setImage(e.target.files[0])}
       />
       <Button variant="contained" color="primary" onClick={createCourse}>
         Create Course

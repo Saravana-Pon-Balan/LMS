@@ -1,8 +1,8 @@
 // router.js
-import React from "react";
+import React, { useEffect } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import cookieManager from "../manager/cookieManager"; 
-import Code from "./learnComponents/code/code";
+import Code from "./code/code";
 import Saved from "./learnComponents/saved";
 import Subscribed from "./learnComponents/subscribed";
 import CourseList from "./learnComponents/Course/CourseList";
@@ -12,47 +12,53 @@ import CreateCourse from "./learnComponents/Course/CreateCourse";
 import CourseCreation from "./learnComponents/Course/CourseCreation";
 import Login from "./signup/login";
 import SignUp from "./signup/signup";
+import Feed from "../socialComp/Home";
 
 const Router = ({ open }) => {
-  const userData = cookieManager.getUserInfo();
-
+  var userData=""
+  useEffect(()=>{
+    userData = cookieManager.getUserInfo();
+    console.log(userData)
+  })
+  
   return (
     <Routes>
-      
+      <Route
+        exact path="/"
+        element={ <CourseList />}
+      />
       <Route
         path="/playground"
-        element={userData ? <Code /> : <Navigate to="/login" />}
+        element={<Code />}
       />
       <Route
         path="/saved"
-        element={userData ? <Saved /> : <Navigate to="/login" />}
+        element={ <Saved /> }
       />
       <Route
         path="/subscribed"
-        element={userData ? <Subscribed /> : <Navigate to="/login" />}
+        element={<Navigate to="/login" />}
       />
       <Route
         path="/courses/:id"
-        element={userData ? <CourseDetails /> : <Navigate to="/login" />}
+        element={<CourseDetails />}
       />
-      <Route
-        path="/courses/:id/:name"
-        element={userData ? <CourseContent open={open} /> : <Navigate to="/login" />}
-      />
+     
       <Route
         path="/createcourse"
-        element={userData ? <CreateCourse /> : <Navigate to="/login" />}
+        element={<CreateCourse />}
       />
       <Route
         path="/coursecreation/:id/:name"
-        element={userData ? <CourseCreation /> : <Navigate to="/login" />}
+        element={<CourseCreation />}
+      />
+      <Route
+        path="/coursecontent/:id"
+        element={<CourseContent />}
       />
       <Route path="/login" element={userData ? <Navigate to="/" /> : <Login />} />
       <Route path="/signup" element={userData ? <Navigate to="/" /> : <SignUp />} />
-      <Route
-        path="/"
-        element={userData ? <CourseList /> : <Navigate to="/login" />}
-      />
+      <Route path="/feed" element={<Feed/>} />
     </Routes>
   );
 };

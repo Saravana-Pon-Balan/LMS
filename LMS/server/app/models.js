@@ -18,6 +18,7 @@ const courseSchema = new Schema(
     {
         title : {type:String, required:true},
         description : {type:String},
+        thumbnail:{type:String },
         creator : {type:String},
         contents : [
             {
@@ -54,18 +55,31 @@ courseSchema.method({
 
 const codeSchema = new Schema({
     userId: { type:String},
-    file : {
-        file_name:{type:String},
-        path:{type:String},
-        file_type:{type:String},
-        created_at: {type: Date, default: Date.now }
-    }
+    file_name:{type:String},
+    language:{type:String},
+    code : {type:String},
+    created_at: {type: Date, default: Date.now }
+
 });
+
+const postSchema = new Schema({
+    userId : {type:String},
+    postContent : {type:String},
+    postMedia: {type:String},
+    like: {type:Number},
+    comments :[
+        {
+            userId:{type:String},
+            comment:{type:String}
+        },
+    ],
+})
 
 const Models = {
     userModel: mongoose.model('UserData', userSchema),
     courseModel: mongoose.model('CourseData', courseSchema),
-    codeModel: mongoose.model('CodeData', codeSchema)
+    codeModel: mongoose.model('CodeData', codeSchema),
+    postModel:mongoose.model('PostData',postSchema),
 };
 
 module.exports = Models;
