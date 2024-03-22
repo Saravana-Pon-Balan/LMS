@@ -1,6 +1,5 @@
-// router.js
-import React, { useEffect } from "react";
-import { Routes, Route, Navigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 import cookieManager from "../manager/cookieManager"; 
 import Code from "./code/code";
 import Saved from "./learnComponents/saved";
@@ -15,50 +14,26 @@ import SignUp from "./signup/signup";
 import Feed from "../socialComp/Home";
 
 const Router = ({ open }) => {
-  var userData=""
-  useEffect(()=>{
-    userData = cookieManager.getUserInfo();
-    console.log(userData)
-  })
-  
+  const location = useLocation();
+  const [userData, setUserData] = useState(cookieManager.getUserInfo());
+
+  useEffect(() => {
+    setUserData(cookieManager.getUserInfo());
+  }, [location]);
+
   return (
     <Routes>
-      <Route
-        exact path="/"
-        element={ <CourseList />}
-      />
-      <Route
-        path="/playground"
-        element={<Code />}
-      />
-      <Route
-        path="/saved"
-        element={ <Saved /> }
-      />
-      <Route
-        path="/subscribed"
-        element={<Navigate to="/login" />}
-      />
-      <Route
-        path="/courses/:id"
-        element={<CourseDetails />}
-      />
-     
-      <Route
-        path="/createcourse"
-        element={<CreateCourse />}
-      />
-      <Route
-        path="/coursecreation/:id/:name"
-        element={<CourseCreation />}
-      />
-      <Route
-        path="/coursecontent/:id"
-        element={<CourseContent />}
-      />
+      <Route exact path="/" element={userData ? <CourseList /> : <Navigate to="/login"/>} />
+      <Route path="/playground" element={userData ? <Code /> : <Navigate to="/login"/>} />
+      <Route path="/saved" element={userData ? <Saved /> : <Navigate to="/login"/>} />
+      <Route path="/subscribed" element={userData ? <Subscribed /> : <Navigate to="/login" />} />
+      <Route path="/courses/:id" element={userData ? <CourseDetails /> : <Navigate to="/login"/>} />
+      <Route path="/createcourse" element={userData ? <CreateCourse /> : <Navigate to="/login"/>} />
+      <Route path="/coursecreation/:id/:name" element={userData ? <CourseCreation /> : <Navigate to="/login"/>} />
+      <Route path="/coursecontent/:id" element={userData ? <CourseContent /> : <Navigate to="/login"/>} />
       <Route path="/login" element={userData ? <Navigate to="/" /> : <Login />} />
       <Route path="/signup" element={userData ? <Navigate to="/" /> : <SignUp />} />
-      <Route path="/feed" element={<Feed/>} />
+      <Route path="/feed" element={userData ? <Feed /> : <Navigate to="/login"/>} />
     </Routes>
   );
 };
