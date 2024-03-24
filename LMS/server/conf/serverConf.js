@@ -12,6 +12,7 @@ const configureExpressApp = (app) => {
 
     // Serve static files from the specified directory
     const staticFilesDirectory = path.join(__dirname, "..", "app", "Controller", "Course");
+    console.log(staticFilesDirectory)
     app.use(express.static(staticFilesDirectory));
 };
 

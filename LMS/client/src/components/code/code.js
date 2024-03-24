@@ -5,16 +5,15 @@ import Navbar from './nav';
 import axios from 'axios';
 import spinner from './spinner.gif';
 import { Box, Button, TextareaAutosize } from '@mui/material';
-import cookieManager from "../../manager/cookieManager";
 
 
-function Code() {
+function Code(props) {
     // State variables
     const [userCode, setUserCode] = useState('');
     const [userInput, setUserInput] = useState('');
     const [userOutput, setUserOutput] = useState('');
     const [loading, setLoading] = useState(false);
-	const userid = cookieManager.getUserInfo();
+	const userid = props.userData;
     console.log(userid)
     // State variables for editor
     const [userLang, setUserLang] = useState("python");
@@ -29,7 +28,7 @@ function Code() {
         axios.post(`http://localhost:3001/compile`, {
             code: userCode,
             language: userLang,
-            input: userInput
+            input: userInput,
         }).then((res) => {
             setUserOutput(res.data.output);
         }).then(() => {
@@ -78,7 +77,7 @@ function Code() {
                     />
                     
                 </Box>
-                <Box className="right-container"  width={"100%"}>
+                <Box className="right-container" paddingLeft={"20px"} width={"100%"}>
                     <h4>Input:</h4>
                     <Box className="input-box">
                         <TextareaAutosize id="code-inp" onChange={(e) => setUserInput(e.target.value)}>

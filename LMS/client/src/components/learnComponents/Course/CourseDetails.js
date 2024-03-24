@@ -8,8 +8,9 @@ import { TreeView } from '@mui/x-tree-view/TreeView';
 import { TreeItem } from '@mui/x-tree-view/TreeItem';
 import axios from 'axios';
 
-const CourseDetails = () => {
+const CourseDetails = (props) => {
   const { id } = useParams();
+  const {userData} = props
   const [courseDetails, setCourseDetails] = useState({
     name: "",
     description: "",
@@ -40,6 +41,19 @@ const CourseDetails = () => {
     fetchCourseDetails();
   }, [id]);
 
+  const handleEnroll = async() =>{
+    console.log("loged")
+    try {
+      const response = await axios.post("http://localhost:3001/set_course_enroll", {
+        courseId : id ,
+        email:userData
+      });
+     console.log(response)
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   return (
     <Box padding={"10px"}>
       <Typography variant="h2" color="initial">
@@ -50,7 +64,7 @@ const CourseDetails = () => {
           <img src={img} alt="Thumbnail" width={"350px"} height={"300px"} style={{ borderRadius: "10px" }} />
         
         <Link to={`/coursecontent/${id}`}>
-        <Button variant="contained" color="primary" height="60px" style={{ marginTop: "20px", width: "100%" }}>
+        <Button onClick={handleEnroll} variant="contained" color="primary" height="60px" style={{ marginTop: "20px", width: "100%" }}>
             Start
           </Button>
           </Link>

@@ -10,6 +10,7 @@ const { log } = require("console");
 
 const UserModel = Models.userModel;
 const CourseModel = Models.courseModel;
+const EnrollModel = Models.courseEnrollModel;
 const CodeModel = Models.codeModel;
 const PostModel = Models.postModel;
 
@@ -36,7 +37,6 @@ module.exports = {
     try {
       const userObj = new UserModel(requestData);
       await userObj.saveData();
-      console.log("User saved");
       res.send(requestData.email);
     } catch (error) {
       console.error(error);
@@ -47,7 +47,6 @@ module.exports = {
     const requestData = req.body;
     try {
       const userInfo = await UserModel.find({ email: requestData.email });
-      console.log(userInfo)
       res.send(userInfo);
     } catch (error) {
       console.error(error);
@@ -55,19 +54,17 @@ module.exports = {
     }
   },
   createCourse: async (req, res) => {
-    const { title, description } = req.body;
+    const { title, description,email } = req.body;
     const thumbnail = req.file.path; 
-    console.log(thumbnail)
     try {
       const courseObj = new CourseModel({
         title: title,
         description: description,
-        thumbnail: thumbnail
+        thumbnail: thumbnail,
+        creator : email,
       });
       await courseObj.save();
-      console.log("Course saved");
       const courseId = courseObj._id;
-      console.log(courseObj);
       res.status(200).send(courseId);
     } catch (error) {
       console.error(error);
@@ -88,7 +85,6 @@ module.exports = {
 
       await course.save();
 
-      console.log(course);
 
       res.status(200).send("Directory added successfully");
     } catch (error) {
@@ -136,7 +132,6 @@ module.exports = {
 
       await course.save();
 
-      console.log(course);
 
       res.status(200).send("File added successfully");
     } catch (error) {
@@ -203,7 +198,6 @@ module.exports = {
 
       await course.save();
 
-      console.log(course);
 
       res.status(200).send("File added successfully");
     } catch (error) {
@@ -227,11 +221,8 @@ module.exports = {
   getCourseContent: async (req, res) => {
     try {
       const courseId = req.params.id;
-      console.log(courseId)
       const course = await CourseModel.findById(courseId);
-      console.log(course);
       if (!course) {
-        console.log(course);
         return res.status(404).json({ error: 'Course not found' });
       }
       res.json(course); // Return only course contents
@@ -245,7 +236,7 @@ module.exports = {
     let code = req.body.code; 
     let language = req.body.language; 
     let input = req.body.input; 
-    console.log(code+language)
+    let file_name = req.body.file_name;
     if (language == 'python')
         language = 'python3'
    
@@ -268,18 +259,89 @@ module.exports = {
     Axios(config) 
         .then((response) => { 
             res.send(response.data) 
-            console.log(response.data) 
         }).catch((error) => { 
             console.log(error); 
         }); 
   },
   saveCode :async (req,res)=>{
       const requestData = req.body
-      console.log(req.body.userId);
-      const codeObj = new CodeModel(requestData)
+      const codeObj = await CodeModel(requestData)
 
       codeObj.saveData()
       res.send("code saved")
-      console.log("saved");
+  },
+
+  setCourseEnroll: async (req, res) => {
+    const requestData = req.body;
+    console.log(req.body);
+  
+    try {
+      // Check if the course exists
+      const course = await CourseModel.findById(requestData.courseId);
+      if (!course) {
+        // If the course doesn't exist, return an error response
+        return res.status(404).send("Course not found");
+      }
+  
+      // Check if the user is already enrolled in the course
+      const enrollment = await EnrollModel.findOne({
+        courseId: requestData.courseId,
+        userId: requestData.userId // Assuming you have userId in requestData
+      });
+  
+      if (!enrollment) {
+        // If the user is not enrolled, create a new enrollment
+        const newEnrollment = new EnrollModel({
+          courseId: requestData.courseId,
+          userId: requestData.userId // Assuming you have userId in requestData
+        });
+        await newEnrollment.save();
+        console.log("Enrollment saved");
+        return res.send("Enrollment saved");
+      } else {
+        // If the user is already enrolled, return a message indicating so
+        console.log("User already enrolled in the course");
+        return res.send("User already enrolled in the course");
+      }
+    } catch (error) {
+      // Handle any errors that occur during the process
+      console.error("Error:", error);
+      return res.status(500).send("Internal Server Error");
+    }
+  },
+  
+      
+  
+  getEnrolledCourse: async (req, res) => {
+    try {
+        const requestData = req.body.email;
+        console.log(requestData);
+        
+        const enrolledCourses = await EnrollModel.find({ email: requestData });
+
+        const response = await Promise.all(enrolledCourses.map(async course => {
+        const courseDetails = await CourseModel.findOne({ _id: course.courseId });
+
+            return {
+                id: courseDetails._id,
+                title: courseDetails.title,
+                description: courseDetails.description
+            };
+        }));
+
+        res.send(response);
+    } catch (error) {
+        console.error("Error retrieving enrolled courses:", error);
+        res.status(500).send("Internal server error");
+    }
+},
+
+  getOwnCourse: async(req,res)=>{
+    const courseDetails = await CourseModel.findOne({ creator: req.email });
+    console.log()
+    res.send(courseDetails);
   }
+
 };
+
+

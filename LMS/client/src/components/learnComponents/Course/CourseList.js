@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { Grid } from '@mui/material';
-import CourseCard from './CourseCard';
 import axios from "axios";
+import CourseListPage from '../../../pages/course/CourseListPage';
 
-const CourseList = () => {
+const CourseList = (props) => {
+  const {open} = props;
   const [courses, setCourses] = useState([]);
 
   useEffect(() => {
@@ -20,17 +20,7 @@ const CourseList = () => {
   }, []); 
 
   return (
-    <Grid container spacing={2} sx={{maxWidth:"100vw", display: "flex", overflowY: "scroll", position: "relative"}}>
-      {courses.map((course) => (
-        <Grid item key={course.id} xs={12} sm={6} md={5} lg={4}>
-          <CourseCard
-            id={course.id}
-            title={course.title}
-            description={course.description}
-          />
-        </Grid>
-      ))}
-    </Grid>    
+    <CourseListPage open={open} course={courses} />
   );
 };
 

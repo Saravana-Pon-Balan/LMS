@@ -8,7 +8,8 @@ import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-
+import LabelIcon from '@mui/icons-material/Label';
+import EditNoteIcon from '@mui/icons-material/EditNote';
 
 export default function SidebarItems(props) {
   const { open } = props;
@@ -121,6 +122,62 @@ export default function SidebarItems(props) {
                 <BookmarkIcon />
               </ListItemIcon>
               <ListItemText primary={"Saved"} sx={{ opacity: open ? 1 : 0 }} />
+            </ListItemButton>
+          </ListItem>
+        </Link>
+        <Link to="/mylearning" 
+        style={{ textDecoration: "none",
+        
+       
+        }}>
+          <ListItem disablePadding sx={{ display: "block" }}>
+            <ListItemButton
+              sx={{
+                minHeight: 48,
+                justifyContent: open ? "initial" : "center",
+                px: 2.5,
+                display:"flex",
+                maxWidth: open ?  "none": "60px !important",
+              }}
+            >
+              <ListItemIcon
+                sx={{
+                  minWidth: 0,
+                  mr: open ? 3 : "auto",
+                  justifyContent: "center",
+                }}
+              >
+                <LabelIcon />
+              </ListItemIcon>
+              <ListItemText primary={"My Learnings"} sx={{ opacity: open ? 1 : 0 }} />
+            </ListItemButton>
+          </ListItem>
+        </Link>
+        <Link to="/mycourse" 
+        style={{ textDecoration: "none",
+        
+       
+        }}>
+          <ListItem disablePadding sx={{ display: "block" }}>
+            <ListItemButton
+              sx={{
+                minHeight: 48,
+                justifyContent: open ? "initial" : "center",
+                px: 2.5,
+                display:"flex",
+                maxWidth: open ?  "none": "60px !important",
+              }}
+            >
+              <ListItemIcon
+                sx={{
+                  minWidth: 0,
+                  mr: open ? 3 : "auto",
+                  justifyContent: "center",
+                }}
+              >
+                <EditNoteIcon />
+              </ListItemIcon>
+              <ListItemText primary={"Own Courses"} sx={{ opacity: open ? 1 : 0 }} />
             </ListItemButton>
           </ListItem>
         </Link>

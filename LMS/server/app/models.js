@@ -77,13 +77,25 @@ const postSchema = new Schema({
             comment:{type:String}
         },
     ],
-})
+});
+
+const courseEnrollSchema = new Schema({
+    courseId : {type:String},
+    email : {type:String}
+});
+courseEnrollSchema.method({
+    saveData: async function () {
+        return this.save();
+    }
+});
 
 const Models = {
     userModel: mongoose.model('UserData', userSchema),
     courseModel: mongoose.model('CourseData', courseSchema),
     codeModel: mongoose.model('CodeData', codeSchema),
     postModel:mongoose.model('PostData',postSchema),
+    courseEnrollModel:mongoose.model('enrollData',courseEnrollSchema),
+
 };
 
 module.exports = Models;

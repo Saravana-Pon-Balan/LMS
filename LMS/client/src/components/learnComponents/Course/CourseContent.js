@@ -1,4 +1,4 @@
-import * as React from "react";
+import { React, useState, useEffect } from "react";
 import CardMedia from "@mui/material/CardMedia";
 import { Box, Typography } from "@mui/material";
 import { TreeItem, TreeView } from "@mui/x-tree-view";
@@ -13,31 +13,40 @@ import { useParams } from "react-router-dom";
 
 export default function CourseContent(props) {
   const { open } = props;
-  const [value, setValue] = React.useState('1');
-  const [videoUrl, setVideoUrl] = React.useState('');
-  const [captions, setCaptions] = React.useState('');
-  const [courseData, setCourseData] = React.useState(null);
+  const [value, setValue] = useState('1');
+  const [videoUrl, setVideoUrl] = useState('');
+  const [captions, setCaptions] = useState('');
+  const [courseData, setCourseData] = useState(null);
+  const [quiz, setQuiz] = useState([]);
+  const [discussion, setDiscussion] = useState([]);
+
   const { id } = useParams();
 
-  React.useEffect(() => {
-    axios.get(`http://localhost:3001/course_content/${id}`) // Fetch course content based on course ID
+  useEffect(() => {
+    axios.get(`http://localhost:3001/course_content/${id}`)
       .then(response => {
-        setCourseData(response.data); // Set the entire course data
+        setCourseData(response.data);
+
       })
       .catch(error => {
         console.error('Error fetching course content:', error);
       });
-  }, [id]); // Fetch content whenever courseId changes
-
+  }, [id]);
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
 
+
+
+
   const handleFileClick = (file) => {
-    setVideoUrl(file.media_path);
+    setVideoUrl("http://localhost:3001/" + file.media_path.split('/').pop());
+    console.log(file);
+    setQuiz(file.quizes);
+    setDiscussion(file.discussion);
     setCaptions(file.caption);
   };
-  
+
 
   const sidebarWidth = open ? 230 : 100;
 
@@ -55,14 +64,12 @@ export default function CourseContent(props) {
       >
         <CardMedia
           component="video"
-          sx={{ width: "66.66%", height: "100%", flexGrow: "2" }}
+          sx={{ width: "100%", height: "100%", flexGrow: "2" }}
           src={videoUrl}
           controls
           alt="Course video"
         />
-        <Typography>
-          {captions}
-        </Typography>
+
         <Box sx={{ flexGrow: "1", maxWidth: "33.33%", marginLeft: "10px" }}>
           <Typography variant="body1" color="initial" fontSize="25px">
             List of Contents
@@ -94,15 +101,17 @@ export default function CourseContent(props) {
       </Box>
       <Box sx={{ width: `calc(100vw - ${sidebarWidth}px)`, typography: 'body1' }}>
         <TabContext value={value}>
-          <Box sx={{ borderBottom: 1, borderColor: 'divider'}}>
+          <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
             <TabList onChange={handleChange}>
-              <Tab label="Item One" value="1" sx={{marginLeft:"10%"}} />
-              <Tab label="Item Two" value="2" sx={{marginLeft:"10%"}}/>
-              <Tab label="Item Three" value="3" sx={{marginLeft:"10%"}}/>
+              <Tab label="Description" value="1" sx={{ marginLeft: "10%" }} />
+              <Tab label="Quiz" value="2" sx={{ marginLeft: "10%" }} />
+              <Tab label="Discussion" value="3" sx={{ marginLeft: "10%" }} />
             </TabList>
           </Box>
-          <TabPanel value="1">Item One</TabPanel>
-          <TabPanel value="2">Item Two</TabPanel>
+          <TabPanel value="1">
+            <Typography>{captions}</Typography>
+          </TabPanel>
+          <TabPanel value="2">{quiz}</TabPanel>
           <TabPanel value="3">Item Three</TabPanel>
         </TabContext>
       </Box>

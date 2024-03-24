@@ -8,6 +8,10 @@ const router = (app) =>{
     app.post('/add_file',Controller.uploadFiles,Controller.addFile);
     app.post('/getCourseDetails',Controller.getCourseDetails);
     app.get('/course_content/:id', Controller.getCourseContent);
+    app.post('/set_course_enroll', Controller.setCourseEnroll);
+    app.post('/get_my_course', Controller.getEnrolledCourse);
+    app.post('/get_my_own_course', Controller.getOwnCourse);
+
 
     app.post('/compile',Controller.compiler);
     app.post('/save_code',Controller.saveCode);

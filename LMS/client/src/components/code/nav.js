@@ -9,25 +9,21 @@ const navbarStyles = {
     paddingLeft: 20,
     height: 50,
     textAlign: 'center',
-    color: '#afec3f',
-    backgroundColor: '#474747',
+    color: 'black',
+    backgroundColor: '#00000014',
     gap: 20,
 };
 
 const selectContainerStyles = {
     width: 120,
     color: 'black',
-    backgroundColor: '#474747',
+    backgroundColor: 'black',
 };
 
 const inputRangeStyles = {
-    height: 36,
-    width: 80,
+    width: 120,
     fontSize: 16,
     color: 'rgb(185, 185, 185)',
-    border: '1px solid #afec3f',
-    borderRadius: 4,
-    backgroundColor: '#474747',
 };
 
 const Navbar = ({ userLang, setUserLang, userTheme, setUserTheme, fontSize, setFontSize, compile,fileName,setFileName, Save}) => {

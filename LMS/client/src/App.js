@@ -64,13 +64,17 @@ const Container = styled.div`
   position:relative;
   margin-top:5%;
 `
+
 const App = () => {
+  
   const [open, setOpen] = useState(false);
   const userData = cookieManager.getUserInfo();
 
   const pull = (data) => {
     setOpen(data);
   };
+  
+  
   return (
     <Box>
       <CssBaseline />
