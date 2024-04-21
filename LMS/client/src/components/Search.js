@@ -72,10 +72,10 @@ export default function SearchComp(){
             <Autocomplete
               disablePortal
               id="combo-box-demo"
-              options={courseTitle}
+              options={courseTitle.map((id,title)=>title)}
               sx={{ width: 300 ,paddingLeft:"50px", border:'none',color:"white"}} 
               noOptionsText="No Course Found"
-              onChange={handleSearch}
+              //onChange={(e, value) => console.log(e.target, value.title)}
               renderInput={(params) => <TextField sx={{color:"white"}} {...params} onChange={handleSearch} label="Search here" />}
             />
           </Search>

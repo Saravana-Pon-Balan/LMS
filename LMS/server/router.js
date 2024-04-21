@@ -13,6 +13,8 @@ const router = (app) =>{
     app.post('/get_my_own_course', Controller.getOwnCourse);
     app.get('/get_course_title',Controller.getCourseTitles);
     app.post('/search_course',Controller.searchCourse);
+    app.get('/get_course_data/:id',Controller.getCourseData);
+    app.post('/get_file_data',Controller.getFileData);
 
     app.post('/compile',Controller.compiler);
     app.post('/save_code',Controller.saveCode);

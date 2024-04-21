@@ -5,7 +5,7 @@ import CourseListPage from '../../pages/course/CourseListPage';
 const OwnCourse = (props) =>{
     const {userData,open} = props;
     const [courses, setCourses] = useState([]);
-
+    console.log(courses)
   useEffect(() => {
     const getCourse = async () => {
       try {

@@ -11,7 +11,9 @@ import { Link } from 'react-router-dom';
 export default function CourseCard(props) {
   const {id,title,description,creator} = props;
   console.log(creator)
+  console.log(id)
   return (
+    
     <Link style={{textDecoration:"none"}} to={!creator?`/courses/${id}`:`/coursecreation/${id}/${title}/edit`} >
     <Card 
     sx={{ margin:"20px",

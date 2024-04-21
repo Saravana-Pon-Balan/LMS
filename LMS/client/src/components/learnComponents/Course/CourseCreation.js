@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import { Container, Typography, Box, TextField, Button, Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
 import { TreeItem, TreeView } from "@mui/x-tree-view";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
@@ -11,18 +11,35 @@ function CourseCreationPage() {
   const [fileName, setFileName] = useState("");
   const [videoInput, setVideoInput] = useState(null);
   const [caption, setCaption] = useState("");
-  const [courseStructure, setCourseStructure] = useState([
-    {
-      title: 'HTML Course',
-      children: [
-        "base"
-      ]
-    }
-  ]);
+  const [courseStructure, setCourseStructure] = useState([]);
   const [openAddDirectoryDialog, setOpenAddDirectoryDialog] = useState(false);
   const [newDirectoryName, setNewDirectoryName] = useState("");
   const [openQuizDialog, setOpenQuizDialog] = useState(false);
   const [quizQuestions, setQuizQuestions] = useState([]);
+  const [changeFileId, setChangeFileId] = useState("");
+  console.log(typeof quizQuestions)
+
+  const getData = async()=>{
+    await axios.get(`http://localhost:3001/get_course_data/${id}`)
+      .then(response => {
+        setCourseStructure(response.data.courseStructure);
+        if (courseStructure.length === 0 && !openAddDirectoryDialog) {
+          setOpenAddDirectoryDialog(false);
+        }
+      })
+      .catch(error => {
+        console.error('Error fetching course data:', error);
+      });
+  }
+   useEffect(() => {
+      getData();
+  }, []);
+
+  useEffect(() => {
+    if (courseStructure.length === 0 && !openAddDirectoryDialog) {
+      setOpenAddDirectoryDialog(true);
+    }
+  }, [courseStructure, openAddDirectoryDialog]);
 
   const handleSaveDirectory = () => {
     setCourseStructure((prev) => [...prev, { title: newDirectoryName, children: [] }])
@@ -48,14 +65,16 @@ function CourseCreationPage() {
     const lastIndex = updatedCourseStructure.length - 1;
     updatedCourseStructure[lastIndex].children.push(fileName);
     setCourseStructure(updatedCourseStructure);
-    console.log(videoInput);
+    const edit = window.location.href.includes("/edit")
 
     const formData = new FormData();
     formData.append('media', videoInput);
     formData.append('name', fileName);
     formData.append('caption', caption);
     formData.append('courseId', id);
-    formData.append('quiz',quizQuestions);
+    formData.append('quizQuestions', JSON.stringify(quizQuestions));
+    formData.append('edit',edit);
+    formData.append('file_id',changeFileId);
 
     axios.post("http://localhost:3001/add_file", formData, {
       headers: {
@@ -64,14 +83,17 @@ function CourseCreationPage() {
     })
       .then(response => {
         console.log(response.data);
+        setFileName("");
+        setVideoInput(null);
+        setCaption("");
+        setQuizQuestions([])
+        setOpenQuizDialog(false)
       })
       .catch(error => {
         console.error('Error adding file:', error);
       });
 
-    setFileName("");
-    setVideoInput(null);
-    setCaption("");
+    
   }
 
   const handleAddDirectoryClose = () => {
@@ -83,27 +105,36 @@ function CourseCreationPage() {
   };
 
   const handleAddOption = (questionIndex) => {
-    const updatedQuestions = [...quizQuestions];
-    updatedQuestions[questionIndex].options.push('');
-    setQuizQuestions(updatedQuestions);
+    setQuizQuestions(prev => {
+      const updatedQuestions = [...prev];
+      updatedQuestions[questionIndex].options.push('');
+      return updatedQuestions;
+    });
   };
+  
 
   const handleQuestionChange = (questionIndex, event) => {
-    const updatedQuestions = [...quizQuestions];
-    updatedQuestions[questionIndex].question = event.target.value;
-    setQuizQuestions(updatedQuestions);
+    setQuizQuestions(prev => {
+      const updatedQuestions = [...prev];
+      updatedQuestions[questionIndex].question = event.target.value;
+      return updatedQuestions;
+    });
   };
 
   const handleOptionChange = (questionIndex, optionIndex, event) => {
-    const updatedQuestions = [...quizQuestions];
-    updatedQuestions[questionIndex].options[optionIndex] = event.target.value;
-    setQuizQuestions(updatedQuestions);
+    setQuizQuestions(prev => {
+      const updatedQuestions = [...prev];
+      updatedQuestions[questionIndex].options[optionIndex] = event.target.value;
+      return updatedQuestions;
+    });
   };
-
+  
   const handleCorrectOptionChange = (questionIndex, event) => {
-    const updatedQuestions = [...quizQuestions];
-    updatedQuestions[questionIndex].correctOption = event.target.value;
-    setQuizQuestions(updatedQuestions);
+    setQuizQuestions(prev => {
+      const updatedQuestions = [...prev];
+      updatedQuestions[questionIndex].correctOption = event.target.value;
+      return updatedQuestions;
+    });
   };
 
   const renderQuizQuestions = () => {
@@ -143,8 +174,33 @@ function CourseCreationPage() {
       </div>
     ));
   };
+  
 
-
+  const handleFileClick = (node, childNode) => {
+    const data = {
+      course_id: id,
+      node: node,
+      childNode: childNode
+    };
+  
+    axios.post("http://localhost:3001/get_file_data", data)
+      .then((res) => {
+        console.log(res.data.file);
+        setFileName(res.data.file.file_name);
+        setCaption(res.data.file.caption);
+        setChangeFileId(res.data.file._id);
+        // Check if there are quiz questions in the response
+        if (res.data.file.quizes) {
+          setOpenQuizDialog(true); // Open the quiz dialog
+          setQuizQuestions(res.data.file.quizes); // Set the retrieved quiz questions
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+  
+  
  
 
 return (
@@ -218,7 +274,12 @@ return (
           <TreeItem key={key} nodeId={node.title} label={node.title}>
             {Array.isArray(node.children) && node.children.length > 0
               ? node.children.map((childNode, index) => (
-                <TreeItem key={index} nodeId={childNode} label={childNode} />
+                <TreeItem 
+                key={index} 
+                nodeId={childNode} 
+                label={childNode} 
+                onClick={() => handleFileClick(node.title,childNode)}
+                />
               ))
               : null}
           </TreeItem>

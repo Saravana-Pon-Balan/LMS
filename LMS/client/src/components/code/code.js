@@ -4,7 +4,7 @@ import Editor from "@monaco-editor/react";
 import Navbar from './nav';
 import axios from 'axios';
 import spinner from './spinner.gif';
-import { Box, Button, TextareaAutosize } from '@mui/material';
+import { Box, Button } from '@mui/material';
 
 
 function Code(props) {
@@ -14,7 +14,6 @@ function Code(props) {
     const [userOutput, setUserOutput] = useState('');
     const [loading, setLoading] = useState(false);
 	const userid = props.userData;
-    console.log(userid)
     // State variables for editor
     const [userLang, setUserLang] = useState("python");
     const [userTheme, setUserTheme] = useState("vs-dark");
@@ -80,8 +79,7 @@ function Code(props) {
                 <Box className="right-container" paddingLeft={"20px"} width={"100%"}>
                     <h4>Input:</h4>
                     <Box className="input-box">
-                        <TextareaAutosize id="code-inp" onChange={(e) => setUserInput(e.target.value)}>
-                        </TextareaAutosize>
+                        <textarea id="code-inp" onChange={(e) => setUserInput(e.target.value)} />
                     </Box>
                     <h4>Output:</h4>
                     {loading ? (
