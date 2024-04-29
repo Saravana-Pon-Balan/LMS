@@ -16,7 +16,7 @@ import MyCourse from "./mycourse/MyCourse";
 import OwnCourse from "./mycourse/OwnCourse";
 
 const Router = (props) => {
-  const  {open} = props
+  const  {open, search} = props
   const location = useLocation();
   const [userData, setUserData] = useState(cookieManager.getUserInfo());
 
@@ -27,7 +27,7 @@ const Router = (props) => {
 
   return (
     <Routes>
-      <Route exact path="/" element={userData ? <CourseList open={open}/> : <Navigate to="/login"/>} />
+      <Route exact path="/" element={userData ? <CourseList open={open} search={search}/> : <Navigate to="/login"/>} />
       <Route path="/playground" element={userData ? <Code userData={userData}/> : <Navigate to="/login"/>} />
       <Route path="/saved" element={userData ? <Saved userData={userData}/> : <Navigate to="/login"/>} />
       <Route path="/subscribed" element={userData ? <Subscribed userData={userData}/> : <Navigate to="/login" />} />
@@ -35,7 +35,7 @@ const Router = (props) => {
       <Route path="/createcourse" element={userData ? <CreateCourse userData={userData}/> : <Navigate to="/login"/>} />
       <Route path="/coursecreation/:id/:name" element={userData ? <CourseCreation /> : <Navigate to="/login"/>} />
       <Route path="/coursecreation/:id/:name/edit" element={userData ? <CourseCreation /> : <Navigate to="/login"/>} />
-      <Route path="/coursecontent/:id" element={userData ? <CourseContent /> : <Navigate to="/login"/>} />
+      <Route path="/coursecontent/:id" element={userData ? <CourseContent userData={userData} /> : <Navigate to="/login"/>} />
       <Route path="/mylearning" element={userData ? <MyCourse open={open} userData={userData}/> : <Navigate to="/login"/>} />
       <Route path="/mycourse" element={userData ? <OwnCourse open={open} userData={userData}/> : <Navigate to="/login"/>} />
       <Route path="/login" element={userData ? <Navigate to="/" /> : <Login />} />

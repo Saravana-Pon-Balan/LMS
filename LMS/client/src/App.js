@@ -25,9 +25,14 @@ const App = () => {
   const [open, setOpen] = useState(false);
   const userData = cookieManager.getUserInfo();
   const [chatBotState, setChatbotState] = useState(false);
+  const [searchState, setSearchState] = useState();
   const pullChatBotState = (data)=>{
     setChatbotState(data);
-  }
+  };
+  const pullSearchState = (data)=>{
+    console.log(data)
+    setSearchState(data)
+  };
   const pull = (data) => {
     setOpen(data);
   };
@@ -39,10 +44,10 @@ const App = () => {
       <BrowserRouter>
       {userData?(
         <Block>
-          <Sidebar SideBarState={pull} chatBot={pullChatBotState} />
+          <Sidebar SideBarState={pull} chatBot={pullChatBotState} searchClick={pullSearchState}/>
           <Container >
           {chatBotState&&<Chat style={{"z-index":"1"}}/>}
-          <Router  open={open} />
+          <Router  open={open} search = {searchState}/>
           </Container>
         </Block>
       ):

@@ -45,9 +45,10 @@ import { Autocomplete, TextField } from '@mui/material';
       },
     },
   }));
-export default function SearchComp(){
+export default function SearchComp(props){
   const [courseTitle,setCourseTitle] = useState([])
-
+  const [searchId, setSearchId] = useState()
+  const {searchClicking} = props;
   useEffect(()=>{
     axios.get("http://localhost:3001/get_course_title")
     .then((res)=>{
@@ -58,10 +59,13 @@ export default function SearchComp(){
       console.log(err);
     })
   },[])
-  const handleSearch = (e) =>{
-    axios.post("http://localhost:3001/search_course",{q:e.target.value})
-    
-    
+  const handleOptionClick = (e) =>{
+    // axios.post("http://localhost:3001/search_course",{q:e.target.value})
+    if(e!== null){
+    setSearchId(e.id)
+    searchClicking(e.id)
+   
+    }
   }
     return(
         <Search>
@@ -72,11 +76,12 @@ export default function SearchComp(){
             <Autocomplete
               disablePortal
               id="combo-box-demo"
-              options={courseTitle.map((id,title)=>title)}
+              options={courseTitle}
               sx={{ width: 300 ,paddingLeft:"50px", border:'none',color:"white"}} 
               noOptionsText="No Course Found"
-              //onChange={(e, value) => console.log(e.target, value.title)}
-              renderInput={(params) => <TextField sx={{color:"white"}} {...params} onChange={handleSearch} label="Search here" />}
+              getOptionLabel={(option) => option.title}
+              onChange={(event, value) => handleOptionClick(value)}
+              renderInput={(params) => <TextField sx={{color:"white"}} {...params} label="Search here" />}
             />
           </Search>
     )

@@ -7,6 +7,8 @@ const mongoose  = require("mongoose");
 const Axios = require("axios"); 
 const bot = require("../chatbot/index");
 require('dotenv').config()
+const SaveToSheet = require('../chatbot/savetosheet');
+
 
 const UserModel = Models.userModel;
 const CourseModel = Models.courseModel;
@@ -66,6 +68,7 @@ module.exports = {
       });
       await courseObj.save();
       const courseId = courseObj._id;
+      SaveToSheet(title,description,email,courseId);
       res.status(200).send(courseId);
     } catch (error) {
       console.error(error);
@@ -95,19 +98,16 @@ module.exports = {
   },
   addFile: async (req, res) => {
     try {
-      const { courseId, name, caption, quizQuestions, edit, file_id } = req.body;
+      const { courseId, name, caption, quizQuestions, edit, file_id, dir_id } = req.body;
       const mediaPath = req.file ? req.file.path : null;
-  
-      if (!mediaPath) {
-        return res.status(400).send('No file uploaded');
-      }
+      
   
       let course;
   
       if (edit && file_id) {
         // If it's an edit, find the course and update the file data
         course = await CourseModel.findOneAndUpdate(
-          { "contents.files._id": file_id },
+          { _id: courseId },
           {
             $set: {
               "contents.$[outer].files.$[inner].file_name": name,
@@ -118,51 +118,79 @@ module.exports = {
           },
           {
             arrayFilters: [
-              { "outer._id": courseId }, // Filter by courseId
+              { "outer._id": dir_id }, // Filter by dirid
               { "inner._id": file_id } // Filter by fileId
             ],
             new: true // Return the updated document
           }
         );
+        res.send(await CourseModel.findById(courseId))
+        
       } else {
         // If it's not an edit, find the course by courseId and update the file data
-        course = await CourseModel.findOneAndUpdate(
-          { _id: courseId },
-          {
-            $push: {
-              "contents.$[outer].files": {
-                file_name: name,
-                media_path: mediaPath,
-                caption: caption,
-                quizes: JSON.parse(quizQuestions)
-              }
-            }
-          },
-          {
-            arrayFilters: [
-              { "outer._id": courseId } // Filter by courseId
-            ],
-            new: true // Return the updated document
-          }
+        course = await CourseModel.findOne(
+          { _id: courseId }
         );
+        if (!course) {
+          return res.status(404).send("Course not found");
+        }
+  
+        const n = course.contents.length;
+        if (n > 0) {
+          course.contents[n - 1].files.push({
+            file_name: name,
+            media_path: mediaPath,
+            caption: caption,
+            quizes: [{
+              question: quizQuestions.question,
+              correct_option: quizQuestions.correctOption,
+              options: quizQuestions.options
+            }]
+          });
+        } else {
+          course.contents[0].files.push({
+            file_name: name,
+            media_path: mediaPath,
+            caption: caption,
+            quizes: [{
+              question: quizQuestions.question,
+              correct_option: quizQuestions.correctOption,
+              options: quizQuestions.options
+            }]
+          });
+        }
+  
+        await course.save();
       }
   
       if (!course) {
         return res.status(404).send("Course not found");
       }
   
-      res.status(200).send("File added successfully");
     } catch (error) {
       console.error("Error adding file:", error);
       res.status(500).send("An error occurred while adding file");
     }
-  }
-  ,
+  },
 
   uploadFiles: upload.single("media"),
 
   courseList: async (req, res) => {
     try {
+      const id = req.params.id?req.params.id:null;
+      console.log(id)
+      if(id!==null){
+      const courseObj = await CourseModel.findById(id);
+      const listOfCourse = [{
+        id: courseObj._id,
+        title: courseObj.title,
+        description: courseObj.description,
+        picture: courseObj.picture
+      }];
+      console.log(listOfCourse)
+      res.send(listOfCourse);
+    }
+    else{
       const courseObj = await CourseModel.find();
       const listOfCourse = courseObj.map(element => ({
         id: element._id,
@@ -171,6 +199,7 @@ module.exports = {
         picture: element.picture
       }));
       res.send(listOfCourse);
+    }
     } catch (error) {
       console.error("Error retrieving course list:", error);
       res.status(500).send("An error occurred while retrieving course list");
@@ -398,13 +427,13 @@ module.exports = {
       }
   
       const file = directory.files.find(file => file.file_name === fileName);
-  
+      const dirId = directory._id
       if (!file) {
         return res.status(404).json({ error: 'File not found' });
       }
   
       // Return the details of the found file
-      res.json({ file });
+      res.json({ file ,dir_id:dirId});
     } catch (error) {
       console.error('Error finding file details:', error);
       res.status(500).json({ error: 'Internal server error' });
@@ -423,8 +452,12 @@ module.exports = {
 
     response = await bot(req.body.text)
     res.send(response);
+  },
+  submitQuiz : async(req,res)=>{
+    reqData = req.body;
+    console.log(reqData)
+    res.send(reqData)
   }
-
 };
 
 

@@ -82,7 +82,8 @@ const Drawer = styled(MuiDrawer, {
 export default function SideBar(props) {
   const [open, setOpen] = useState(false);
   const [chatBotState, setChatBotState] = useState(false);
-
+  const [searchState,setSearchState] = useState("")
+  const {SideBarState, chatBot, searchClick} = props;
   const handleDrawerToggle = () => {
     setOpen(!open);
   };
@@ -90,9 +91,13 @@ export default function SideBar(props) {
   const chatBotClicking = (state) => {
     setChatBotState(state);
   };
+  const searchOptionClick = (data)=>{
+    setSearchState(data)
+  }
 
-  props.SideBarState(open);
-  props.chatBot(chatBotState);
+  SideBarState(open);
+  chatBot(chatBotState);
+  searchClick(searchState);
   return (
     <Box sx={{ display: "flex"}}>
       <CssBaseline />
@@ -118,7 +123,7 @@ export default function SideBar(props) {
             >
               Learner Space
             </Typography>
-            <SearchComp />
+            <SearchComp searchClicking={searchOptionClick} />
             <NavItems />
           </Toolbar>
         </AppBar>

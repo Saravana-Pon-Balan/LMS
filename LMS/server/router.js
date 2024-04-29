@@ -15,14 +15,14 @@ const router = (app) =>{
     app.post('/search_course',Controller.searchCourse);
     app.get('/get_course_data/:id',Controller.getCourseData);
     app.post('/get_file_data',Controller.getFileData);
-
+    app.post('/submit_quiz',Controller.submitQuiz);
     app.post('/compile',Controller.compiler);
     app.post('/save_code',Controller.saveCode);
 
     app.post('/chatbot',Controller.chatBot);
 
     app.post('/add_posts',Controller.addPost);
-    app.get('/',Controller.courseList);
+    app.get('/:id?',Controller.courseList);
     
 
 };

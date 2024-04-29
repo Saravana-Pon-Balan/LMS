@@ -1,6 +1,6 @@
 import { React, useState, useEffect } from "react";
 import CardMedia from "@mui/material/CardMedia";
-import { Box, Typography } from "@mui/material";
+import { Box, Button, Typography } from "@mui/material";
 import { TreeItem, TreeView } from "@mui/x-tree-view";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
@@ -12,12 +12,13 @@ import axios from 'axios';
 import { useParams } from "react-router-dom";
 
 export default function CourseContent(props) {
-  const { open } = props;
+  const { open, userData } = props;
   const [value, setValue] = useState('1');
   const [videoUrl, setVideoUrl] = useState('');
   const [captions, setCaptions] = useState('');
   const [courseData, setCourseData] = useState(null);
   const [quiz, setQuiz] = useState([]);
+  const [fileId, setFileId] = useState("");
   const [discussion, setDiscussion] = useState([]);
 
   const { id } = useParams();
@@ -45,9 +46,78 @@ export default function CourseContent(props) {
     setQuiz(file.quizes);
     setDiscussion(file.discussion);
     setCaptions(file.caption);
+    setFileId(file._id);
   };
+  console.log(courseData)
 
+  const Quiz = ({ quizData }) => {
+    const handleQuizSubmit = () => {
+      // Collect user's selected answers
+      const userAnswers = [];
+      quizData.forEach((question, index) => {
+        const selectedOptionIndex = document.querySelector(`input[name="question${index}"]:checked`)?.value;
+        if (selectedOptionIndex) {
+          userAnswers.push({
+            questionId: question._id,
+            selectedOptionIndex: parseInt(selectedOptionIndex)
+          });
+        }
+      });
+  
+      // Construct payload to send to server
+      const payload = {
+        user_id: userData, // Assuming you have a userId to associate with the quiz answers
+        answers: userAnswers,
+        course_id: courseData._id,
+        file_id:fileId
 
+      };
+  
+      // Make POST request to server
+      axios.post('http://localhost:3001/submit_quiz', payload)
+        .then(response => {
+          console.log('Quiz answers submitted successfully:', response.data);
+          // Optionally, you can perform actions based on the server response
+        })
+        .catch(error => {
+          console.error('Error submitting quiz answers:', error);
+        });
+      }
+    return (
+      <div>
+        {quizData.map((item, index) => (
+          <div key={item._id}>
+            <h3>Question {index + 1}</h3>
+            <p>{item.question}</p>
+            {/* Render options */}
+            <ul>
+              {item.options.map((option, optionIndex) => (
+                <li key={optionIndex}>
+                  <label>
+                    <input type="radio" name={`question${index}`} value={optionIndex + 1} />
+                    {option}
+                  </label>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+        <Button variant="contained" onClick={handleQuizSubmit}>Submit</Button>
+      </div>
+    );
+  };
+  const TabPanel = ({ value, index, children }) => {
+    return (
+      <div role="tabpanel" hidden={value !== index}>
+        {value === index && (
+          <Box p={3}>
+            {children}
+          </Box>
+        )}
+      </div>
+    );
+  };
+  
   const sidebarWidth = open ? 230 : 100;
 
   return (
@@ -108,11 +178,16 @@ export default function CourseContent(props) {
               <Tab label="Discussion" value="3" sx={{ marginLeft: "10%" }} />
             </TabList>
           </Box>
-          <TabPanel value="1">
+          <TabPanel value={value} index="1">
             <Typography>{captions}</Typography>
           </TabPanel>
-          <TabPanel value="2">{quiz}</TabPanel>
-          <TabPanel value="3">Item Three</TabPanel>
+          <TabPanel value={value} index="2">
+            <Quiz quizData={quiz} />
+          </TabPanel>
+          <TabPanel value={value} index="3">
+            Item Three
+          </TabPanel>
+
         </TabContext>
       </Box>
     </>

@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "elms-416807",
+  "private_key_id": "f229fa06ab72a48fb89ba0b2816c502a85b5523c",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEugIBADANBgkqhkiG9w0BAQEFAASCBKQwggSgAgEAAoIBAQDMBSt3oJ0X/iLM\nvwsM+Covps6Dbo/5YaVLGP2/fhExlxROhn1vRU6dr75D9MzVG7y0rVkEIX/IasgG\nJbLE01Uh3K40o/3EE3UAxtiUy/MQq7Upx+ddNbYAxWldGkslk/8WUDY//o2WaB7q\nb7fnV/TbdWcG62CCfikHbWV7Tvl7gCzr1jKCdXHOUCxJTtJ2eW4HjvwVBJCsLDYq\nLotaTAqaMKQm4x8X7Z7WxBDcm1YiH/twWJrPWEln68WtZ/yct3biXeeW0UPrVcAn\nftxczA+YxscZLYik3VMQ66Q+QPjN9WdYHVATN8jfyvl/MY4dllqFuFup4rNmxJ7y\nKNwVjdHfAgMBAAECggEAFL7z1WrLfqc/fP1yOg6Oz6CmgElBB6qtEbldWC28Ftmr\niB6h6QDYW9gv60jHKWZ0JmqNfN+L1w07Vhta6yvS4iocEXXu4JOFQsp1jI/pTAks\nggP2Brg8T9DDLuNKapb630HRz75qlwrzFdi9ZR9rDS6KMZ3EBxDyysgOLonwfDp1\nF/jhISHEO0qsPz46k6kNAUojUMhFOqZLQAqtYMGLhnv7CZuqTWEkPGJGsaGYdAoM\na0HmXhUBGcvqeuXGXRFq8F2SmVUxnXZFXeNf0deXggvYDprNARX0QFCi/qrJM/4q\n6t7C1EhJaKMMw9E2JKl/a4ZCJRMolFsySAXKZuYDCQKBgQDq333V0tJagYDLXHaR\nL7UKzTAuCqovUFbm9O4/fvLuhd0v5sY3GZP8lhpsK/W6A9j5/kyMIjfBMz4oRcAG\nwfwqUjwnN8V4u5vlCKwdzMQk5wwMsBibR5qsMM539rN5XCbu9Fdn+MG1xh6sMGEJ\noJ6h/KT22jSVH9jNnUyj2ee2CQKBgQDeXzgITVAgptaAxH3IfjT/3m7JoDeW108e\ncn4vXL/96qPFeWte/+obH16mJZ0zQs80nVJMt1tMj+/3EkBGuQgJuU/HmMjTmyMW\nAo3DaeoX/62MTWc5030bCwbzfch4C6RYjjh1CAY1/w2vr5TRENNgrkyCb2bpRwNU\nFE1TzqoCpwKBgD30G9Y2GQSEmnuJ9UCQy/mAbFAIwiFe2L1tKBcZnmzqZJDJF8na\n9l0vHuMfqV6auzYeLQTd1cUhhijLVT6zFpf3PyS9IlqZaiK86eGmbKqrQ1Npc+Qp\nvBPlf+DG80p001Q+oXusczRGgTq8PCx08MMbyEvQ/QPE9cQu1NN3nBY5AoGAXcja\n4OV6fcrffL9iLUTNJXyyTOb9iuiTvcub3G3Jq1VibM6gshhMq9O3H2uNuSjcKtyO\n8TwDjW7HTfSslydCdJdrRkrxqA0t5wJ8t4Xb7PMwRpP+jSzc/qLP87GA8uA2GAMj\nXHhd5jgDlaz/nozyGTxpmDlTtd71UGiflFD88tECfxGxDWn6Si2+a433f40h7Quz\nTqW+xApMCD+jOHg5EAbtpCm9zLNwJYz7sGznV822HBQEbCuYfbpcE6VXxsjYYQ5s\nIEH+HQdPoP18Vbu+kw6BW5Mn/fUBH5o1vhSIG/iCvTrQ4eBs0q4hkGIr4svLYg4d\n9tkiHO8k99crWZcFytw=\n-----END PRIVATE KEY-----\n",
+  "client_email": "saravana-lms@elms-416807.iam.gserviceaccount.com",
+  "client_id": "111172608508284010978",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/saravana-lms%40elms-416807.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}

@@ -21,8 +21,8 @@ export default function SidebarItems(props) {
   };
   chatBotClick(chatBotState)
   return (
-      <List sx={{position:"fixed"}}>
-        <Link to="/" style={{ textDecoration: "none" }}>
+      <List sx={{position:"fixed", display:"block"}}>
+        <Link to="/" style={{ textDecoration: "none",width:open?"200px":"50px"}}>
           <ListItem disablePadding >
             <ListItemButton
               sx={{

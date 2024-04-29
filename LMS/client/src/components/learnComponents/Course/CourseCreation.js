@@ -17,7 +17,7 @@ function CourseCreationPage() {
   const [openQuizDialog, setOpenQuizDialog] = useState(false);
   const [quizQuestions, setQuizQuestions] = useState([]);
   const [changeFileId, setChangeFileId] = useState("");
-  console.log(typeof quizQuestions)
+  const [directoryId, setDirectoryId] = useState("");
 
   const getData = async()=>{
     await axios.get(`http://localhost:3001/get_course_data/${id}`)
@@ -75,6 +75,7 @@ function CourseCreationPage() {
     formData.append('quizQuestions', JSON.stringify(quizQuestions));
     formData.append('edit',edit);
     formData.append('file_id',changeFileId);
+    formData.append('dir_id',directoryId)
 
     axios.post("http://localhost:3001/add_file", formData, {
       headers: {
@@ -179,7 +180,7 @@ function CourseCreationPage() {
   const handleFileClick = (node, childNode) => {
     const data = {
       course_id: id,
-      node: node,
+      node: node.title,
       childNode: childNode
     };
   
@@ -189,6 +190,7 @@ function CourseCreationPage() {
         setFileName(res.data.file.file_name);
         setCaption(res.data.file.caption);
         setChangeFileId(res.data.file._id);
+        setDirectoryId(res.data.dir_id)
         // Check if there are quiz questions in the response
         if (res.data.file.quizes) {
           setOpenQuizDialog(true); // Open the quiz dialog
@@ -278,7 +280,7 @@ return (
                 key={index} 
                 nodeId={childNode} 
                 label={childNode} 
-                onClick={() => handleFileClick(node.title,childNode)}
+                onClick={() => handleFileClick(node,childNode)}
                 />
               ))
               : null}

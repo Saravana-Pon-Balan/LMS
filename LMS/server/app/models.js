@@ -81,6 +81,17 @@ const postSchema = new Schema({
 
 const courseEnrollSchema = new Schema({
     courseId : {type:String},
+    contents:[
+        {
+            dir_name:{type:String},
+            files:[
+                {
+                fileName:{type:String},
+                marks:{type:Number}
+                }
+            ]
+        }
+    ],
     email : {type:String}
 });
 courseEnrollSchema.method({
