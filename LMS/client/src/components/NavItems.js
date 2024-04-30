@@ -55,7 +55,7 @@ export default function NavItems() {
       open={isMenuOpen}
       onClose={handleMenuClose}
     >
-      <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
+      <Link to={'/profile'} style={{textDecoration:'none'}}><MenuItem onClick={handleMenuClose}>Profile</MenuItem></Link>
       <MenuItem onClick={handleMenuClose}>My account</MenuItem>
     </Menu>
   );

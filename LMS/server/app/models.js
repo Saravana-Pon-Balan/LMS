@@ -70,7 +70,7 @@ const postSchema = new Schema({
     userId : {type:String,default:""},
     postContent : {type:String},
     postMedia: {type:String},
-    like: {type:Number},
+    like: [],
     comments :[
         {
             userId:{type:String},
@@ -78,7 +78,11 @@ const postSchema = new Schema({
         },
     ],
 });
-
+postSchema.method({
+    saveData: async function () {
+        return this.save();
+    }
+});
 const courseEnrollSchema = new Schema({
     courseId : {type:String},
     contents:[

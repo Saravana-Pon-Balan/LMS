@@ -12,8 +12,11 @@ import CourseCreation from "./learnComponents/Course/CourseCreation";
 import Login from "./signup/login";
 import SignUp from "./signup/signup";
 import Feed from "../socialComp/Home";
+import Post from "../socialComp/Post";
+
 import MyCourse from "./mycourse/MyCourse";
 import OwnCourse from "./mycourse/OwnCourse";
+import Profile from "../User/Profile";
 
 const Router = (props) => {
   const  {open, search} = props
@@ -31,6 +34,7 @@ const Router = (props) => {
       <Route path="/playground" element={userData ? <Code userData={userData}/> : <Navigate to="/login"/>} />
       <Route path="/saved" element={userData ? <Saved userData={userData}/> : <Navigate to="/login"/>} />
       <Route path="/subscribed" element={userData ? <Subscribed userData={userData}/> : <Navigate to="/login" />} />
+      
       <Route path="/courses/:id" element={userData ? <CourseDetails userData={userData}/> : <Navigate to="/login"/>} />
       <Route path="/createcourse" element={userData ? <CreateCourse userData={userData}/> : <Navigate to="/login"/>} />
       <Route path="/coursecreation/:id/:name" element={userData ? <CourseCreation /> : <Navigate to="/login"/>} />
@@ -38,9 +42,19 @@ const Router = (props) => {
       <Route path="/coursecontent/:id" element={userData ? <CourseContent userData={userData} /> : <Navigate to="/login"/>} />
       <Route path="/mylearning" element={userData ? <MyCourse open={open} userData={userData}/> : <Navigate to="/login"/>} />
       <Route path="/mycourse" element={userData ? <OwnCourse open={open} userData={userData}/> : <Navigate to="/login"/>} />
+      
+      
+      <Route path="/feed" element={userData ? <Feed userData={userData} /> : <Navigate to="/login"/>} />
+      <Route path="/feed/:id" element={userData? <Post userData={userData}/>: <Navigate to="/login"/>}/>
+      <Route path="/profile" element={userData? <Profile userData={userData}/>: <Navigate to="/login"/>}/>
+      
+      
+      
       <Route path="/login" element={userData ? <Navigate to="/" /> : <Login />} />
       <Route path="/signup" element={userData ? <Navigate to="/" /> : <SignUp />} />
-      <Route path="/feed" element={userData ? <Feed /> : <Navigate to="/login"/>} />
+      
+      
+     
     </Routes>
   );
 };

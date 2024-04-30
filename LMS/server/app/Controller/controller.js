@@ -207,51 +207,19 @@ module.exports = {
   },
 
   addPost : async(req,res)=>{
-    try {
-      const { courseId, name, cp, quiz } = req.body;
-      const mediaPath = req.file ? req.file.path : null;
-      if (!mediaPath) {
-        return res.status(400).send('No file uploaded');
-      }
-      const course = await CourseModel.findOne({ _id: courseId });
+    console.log(req.body)
+    const {author,content} = req.body;
+    const mediaPath = req.file ? req.file.path : null;
+    console.log(mediaPath)
+    const postObj = new PostModel({userId:author,postContent:content,postMedia:mediaPath})
+    postObj.save()
+    res.send("hi")
+  },
 
-      if (!course) {
-        return res.status(404).send("Course not found");
-      }
-
-      const n = course.contents.length;
-      if (n > 0) {
-        course.contents[n - 1].files.push({
-          file_name: name,
-          media_path: mediaPath,
-          caption: cp,
-          quizes: [{
-            question: quiz.question,
-            correct_option: quiz.correctOption,
-            options: quiz.options
-          }]
-        });
-      } else {
-        course.contents[0].files.push({
-          file_name: name,
-          media_path: mediaPath,
-          caption: cp,
-          quizes: [{
-            question: quiz.question,
-            correct_option: quiz.correctOption,
-            options: quiz.options
-          }]
-        });
-      }
-
-      await course.save();
-
-
-      res.status(200).send("File added successfully");
-    } catch (error) {
-      console.error("Error adding file:", error);
-      res.status(500).send("An error occurred while adding file");
-    }
+  getPost: async(req,res)=>{
+    posts = await PostModel.find();
+    console.log(posts)
+    res.send(posts)
   },
 
   getCourseDetails: async (req, res) => {

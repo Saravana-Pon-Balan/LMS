@@ -19,11 +19,14 @@ const router = (app) =>{
     app.post('/compile',Controller.compiler);
     app.post('/save_code',Controller.saveCode);
 
+
     app.post('/chatbot',Controller.chatBot);
 
-    app.post('/add_posts',Controller.addPost);
+    app.post('/upload_posts',Controller.uploadFiles,Controller.addPost);
+    app.get('/get_post',Controller.getPost);
+
     app.get('/:id?',Controller.courseList);
-    
+
 
 };
 
