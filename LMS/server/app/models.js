@@ -6,6 +6,7 @@ const userSchema = new Schema({
     email: { type: String, unique:true, required:true },
     password:{type:String,default:''},
     profilePic: { type: String, default: '' },
+    bio:{type:String},
 });
 
 userSchema.method({
@@ -103,6 +104,7 @@ courseEnrollSchema.method({
         return this.save();
     }
 });
+
 
 const Models = {
     userModel: mongoose.model('UserData', userSchema),

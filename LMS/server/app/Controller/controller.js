@@ -206,21 +206,39 @@ module.exports = {
     }
   },
 
-  addPost : async(req,res)=>{
-    console.log(req.body)
-    const {author,content} = req.body;
+  addPost: async (req, res) => {
+    const { author, content } = req.body;
     const mediaPath = req.file ? req.file.path : null;
-    console.log(mediaPath)
-    const postObj = new PostModel({userId:author,postContent:content,postMedia:mediaPath})
-    postObj.save()
-    res.send("hi")
+    const postObj = new PostModel({ userId: author, postContent: content, postMedia: mediaPath });
+    postObj.save();
+  
+    const filename = postObj.postMedia.split('/').pop(); // Extract filename from the path
+    const mediaURL = `http://localhost:3001/${filename}`; // Construct the URL
+    let updatedPostObj = { ...postObj.toObject(), mediaURL }; // Use let instead of const
+  
+    res.send(updatedPostObj);
   },
+  
 
-  getPost: async(req,res)=>{
-    posts = await PostModel.find();
-    console.log(posts)
-    res.send(posts)
+  getPost: async (req, res) => {
+    try {
+      const posts = await PostModel.find();
+  
+      // Extract filename from postMedia path and construct the URL
+      const postsWithMediaURL = posts.map(post => {
+        const filename = post.postMedia.split('/').pop(); // Extract filename from the path
+        const mediaURL = `http://localhost:3001/${filename}`; // Construct the URL
+        return { ...post.toObject(), mediaURL }; // Add mediaURL to the post object
+      });
+  
+      console.log(postsWithMediaURL);
+      res.send(postsWithMediaURL);
+    } catch (error) {
+      console.error('Error fetching posts:', error);
+      res.status(500).send('Internal Server Error');
+    }
   },
+  
 
   getCourseDetails: async (req, res) => {
     const { courseId } = req.body;
@@ -425,6 +443,33 @@ module.exports = {
     reqData = req.body;
     console.log(reqData)
     res.send(reqData)
+  },
+
+  getUserPost: async(req,res)=>{
+    uid = req.body.uid;
+    console.log(uid)
+    const posts = await PostModel.find({userId:uid})
+    const postsWithMediaURL = posts.map(post => {
+      const filename = post.postMedia.split('/').pop(); // Extract filename from the path
+      const mediaURL = `http://localhost:3001/${filename}`; // Construct the URL
+      return { ...post.toObject(), mediaURL }; // Add mediaURL to the post object
+    });
+
+    console.log(postsWithMediaURL);
+    res.send(postsWithMediaURL);
+  },
+
+  getPostData: async(req,res)=>{
+    pid = req.params.id;
+    console.log(pid)
+    const postObj = await PostModel.findById(pid)
+    const filename = postObj.postMedia.split('/').pop(); 
+    const mediaURL = `http://localhost:3001/${filename}`; 
+    let updatedPostObj = { ...postObj.toObject(), mediaURL }; 
+    console.log(updatedPostObj)
+    res.send(updatedPostObj);
+
+   
   }
 };
 

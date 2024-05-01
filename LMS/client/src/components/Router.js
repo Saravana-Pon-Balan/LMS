@@ -45,7 +45,7 @@ const Router = (props) => {
       
       
       <Route path="/feed" element={userData ? <Feed userData={userData} /> : <Navigate to="/login"/>} />
-      <Route path="/feed/:id" element={userData? <Post userData={userData}/>: <Navigate to="/login"/>}/>
+      <Route path="/posts/:id" element={userData? <Post userData={userData}/>: <Navigate to="/login"/>}/>
       <Route path="/profile" element={userData? <Profile userData={userData}/>: <Navigate to="/login"/>}/>
       
       

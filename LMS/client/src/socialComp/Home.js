@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { Container, Grid, Typography, Card, CardContent, Avatar, TextField, Button, IconButton } from '@mui/material';
+import { Container, Grid, Typography, Box, Card, CardContent, Avatar, TextField, Button, IconButton } from '@mui/material';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import ChatIcon from '@mui/icons-material/Chat';
+import {Link} from 'react-router-dom';
 import axios from 'axios';
 
 const App = (props) => {
@@ -10,13 +11,17 @@ const App = (props) => {
   const [file, setFile] = useState(null);
   const [fileName, setFileName] = useState('No file chosen');
   const { userData } = props;
+  console.log(posts)
+  const imageExtensions = ['.jpg', '.jpeg', '.png'];
+  const videoExtensions = ['.mp4', '.avi', '.mov'];
+
 
   const cardStyle = {
     marginBottom: '16px',
   };
 
   const fileInputStyle = {
-    display: 'none', 
+    display: 'none',
   };
 
   const fileInputLabelStyle = {
@@ -43,6 +48,7 @@ const App = (props) => {
       try {
         const res = await axios.get("http://localhost:3001/get_post");
         setPosts(res.data);
+        console.log(posts)
       } catch (error) {
         console.error('Error fetching posts:', error);
       }
@@ -62,20 +68,27 @@ const App = (props) => {
 
   const handlePostSubmit = async () => {
     const formData = new FormData();
-    formData.append('author', userData); 
-    formData.append('content', postContent); 
-    formData.append('likes', 0); 
-    formData.append('comments', JSON.stringify([])); 
+    formData.append('author', userData);
+    formData.append('content', postContent);
+    formData.append('likes', 0);
+    formData.append('comments', JSON.stringify([]));
 
     if (file) {
       formData.append('media', file);
     }
-
+   
     try {
-      await axios.post('http://localhost:3001/upload_posts/', formData);
-      setPostContent('');
-      setFile(null);
-      setFileName('No file chosen');
+      await axios.post('http://localhost:3001/upload_posts/', formData)
+      .then((res)=>{
+        setPosts((post)=>[...post,res.data]);
+        setPostContent('');
+        setFile(null);
+        setFileName('No file chosen');
+      })
+      .catch((err)=>{
+        console.log(err);
+      })
+     
     } catch (error) {
       console.error('Error posting data to API:', error);
     }
@@ -140,33 +153,36 @@ const App = (props) => {
           </Card>
         </Grid>
         {posts.map((post) => (
-          <Grid key={post._id} item xs={12}>
+          <Box key={post._id} width='calc(100vw - 100px)'>
             <Card style={cardStyle}>
               <CardContent>
-                <Grid container spacing={2} alignItems="center">
-                  <Grid item>
-                    <Avatar alt={post.author} src={post.avatar} />
-                  </Grid>
-                  <Grid item>
-                    <Typography variant="h6" component="h2">{post.author}</Typography>
-                    <a href={`/feed/${post.id}`}>
-                      <Typography variant="body1">{post.content}</Typography>
-                      {post.fileDataURL && post.file.type.startsWith('video') && (
-                        <video controls style={{ maxWidth: '100%' }}>
-                          <source src={post.fileDataURL} type={post.file.type} />
-                        </video>
-                      )}
-                      {post.fileDataURL && !post.file.type.startsWith('video') && (
-                        <img src={post.fileDataURL} alt="Uploaded" style={{ maxWidth: '100%' }} />
-                      )}
-                    </a>
-                    <IconButton aria-label="like" onClick={() => handleLike(post.id)}>
-                      <FavoriteIcon /> {post.likes}
-                    </IconButton>
-                    <IconButton aria-label="comment">
-                      <ChatIcon /> {post.comments && post.comments.length}
-                    </IconButton>
-                    <div>
+                <Box container spacing={2} alignItems="center">
+                  <Box style={{ display: 'flex', alignSelf: 'flex-start' }}>
+                    <Avatar alt={post.author} src={"https://i.pravatar.cc/300"} />
+                    <Typography variant="h6" component="h2">asda</Typography>
+
+                  </Box>
+                  <Box>
+                    <Typography variant="body1">{post.postContent}</Typography>
+                    <Link to={`/posts/${post._id}`}>
+                    {post.mediaURL && videoExtensions.some(ext => post.mediaURL.endsWith(ext)) && (
+                      <video controls style={{ maxWidth: '100%' }}>
+                        <source src={post.mediaURL} type="video/mp4" />
+                      </video>
+                    )}
+                    {post.mediaURL && imageExtensions.some(ext => post.mediaURL.endsWith(ext)) && (
+                      <img src={post.mediaURL} alt="Uploaded" style={{ maxWidth: '100%' }} />
+                    )}
+                    </Link>
+                    <Box>
+                      <IconButton aria-label="like" onClick={() => handleLike(post.id)}>
+                        <FavoriteIcon /> {post.likes}
+                      </IconButton>
+                      <IconButton aria-label="comment">
+                        <ChatIcon /> {post.comments && post.comments.length}
+                      </IconButton>
+                    </Box>
+                    <Box>
                       {post.comments && (post.comments.slice(0, 1).map((comment, index) => (
                         <div key={index}>
                           <Avatar alt={comment.author} src={comment.avatar} />
@@ -176,7 +192,7 @@ const App = (props) => {
                       {post.comments && post.comments.length > 1 && (
                         <Typography variant="body2">+ {post.comments.length - 1} more comments</Typography>
                       )}
-                    </div>
+                    </Box>
                     <TextField
                       fullWidth
                       variant="outlined"
@@ -188,12 +204,13 @@ const App = (props) => {
                         }
                       }}
                     />
-                  </Grid>
-                </Grid>
+                  </Box>
+                </Box>
               </CardContent>
             </Card>
-          </Grid>
+          </Box>
         ))}
+
       </Grid>
     </Container>
   );
