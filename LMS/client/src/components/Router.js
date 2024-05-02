@@ -17,6 +17,7 @@ import Post from "../socialComp/Post";
 import MyCourse from "./mycourse/MyCourse";
 import OwnCourse from "./mycourse/OwnCourse";
 import Profile from "../User/Profile";
+import Chat from "../components/chat/Chat";
 
 const Router = (props) => {
   const  {open, search} = props
@@ -48,6 +49,7 @@ const Router = (props) => {
       <Route path="/posts/:id" element={userData? <Post userData={userData}/>: <Navigate to="/login"/>}/>
       <Route path="/profile" element={userData? <Profile userData={userData}/>: <Navigate to="/login"/>}/>
       
+      <Route path="/message" element={userData? <Chat userData={userData}/>: <Navigate to="/login"/>}/>
       
       
       <Route path="/login" element={userData ? <Navigate to="/" /> : <Login />} />

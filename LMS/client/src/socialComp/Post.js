@@ -14,7 +14,7 @@ const Post = () => {
       userId: '',
       content: '',
       mediaURL: '',
-      likes: 0, // Initialize likes as a number
+      likes: 0, 
       comments: []
     });
   

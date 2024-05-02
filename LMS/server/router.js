@@ -26,6 +26,8 @@ const router = (app) =>{
     app.get('/get_post',Controller.getPost);
     app.get('/get_post_data/:id',Controller.getPostData);
     app.post('/get_user_post',Controller.getUserPost);
+    app.post('/get_user_data',Controller.getUserData);
+    app.post('/set_user_data',Controller.setUserData);
 
     app.get('/:id?',Controller.courseList);
 

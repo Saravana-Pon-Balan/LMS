@@ -3,8 +3,8 @@ const multer = require('multer');
 const { v4: uuidv4 } = require('uuid');
 const path = require('path');
 const fs = require('fs');
-const mongoose  = require("mongoose");
-const Axios = require("axios"); 
+const mongoose = require("mongoose");
+const Axios = require("axios");
 const bot = require("../chatbot/index");
 require('dotenv').config()
 const SaveToSheet = require('../chatbot/savetosheet');
@@ -56,19 +56,19 @@ module.exports = {
     }
   },
   createCourse: async (req, res) => {
-    const { title, description,email } = req.body;
+    const { title, description, email } = req.body;
     console.log(email)
-    const thumbnail = req.file.path; 
+    const thumbnail = req.file.path;
     try {
       const courseObj = new CourseModel({
         title: title,
         description: description,
         thumbnail: thumbnail,
-        creator : email,
+        creator: email,
       });
       await courseObj.save();
       const courseId = courseObj._id;
-      SaveToSheet(title,description,email,courseId);
+      SaveToSheet(title, description, email, courseId);
       res.status(200).send(courseId);
     } catch (error) {
       console.error(error);
@@ -100,10 +100,10 @@ module.exports = {
     try {
       const { courseId, name, caption, quizQuestions, edit, file_id, dir_id } = req.body;
       const mediaPath = req.file ? req.file.path : null;
-      
-  
+
+
       let course;
-  
+
       if (edit && file_id) {
         // If it's an edit, find the course and update the file data
         course = await CourseModel.findOneAndUpdate(
@@ -125,7 +125,7 @@ module.exports = {
           }
         );
         res.send(await CourseModel.findById(courseId))
-        
+
       } else {
         // If it's not an edit, find the course by courseId and update the file data
         course = await CourseModel.findOne(
@@ -134,7 +134,7 @@ module.exports = {
         if (!course) {
           return res.status(404).send("Course not found");
         }
-  
+
         const n = course.contents.length;
         if (n > 0) {
           course.contents[n - 1].files.push({
@@ -159,47 +159,48 @@ module.exports = {
             }]
           });
         }
-  
+        console.log(course)
         await course.save();
       }
-  
+
       if (!course) {
         return res.status(404).send("Course not found");
       }
-  
+
     } catch (error) {
       console.error("Error adding file:", error);
       res.status(500).send("An error occurred while adding file");
     }
+    res.send("hi")
   },
 
   uploadFiles: upload.single("media"),
 
   courseList: async (req, res) => {
     try {
-      const id = req.params.id?req.params.id:null;
+      const id = req.params.id ? req.params.id : null;
       console.log(id)
-      if(id!==null){
-      const courseObj = await CourseModel.findById(id);
-      const listOfCourse = [{
-        id: courseObj._id,
-        title: courseObj.title,
-        description: courseObj.description,
-        picture: courseObj.picture
-      }];
-      console.log(listOfCourse)
-      res.send(listOfCourse);
-    }
-    else{
-      const courseObj = await CourseModel.find();
-      const listOfCourse = courseObj.map(element => ({
-        id: element._id,
-        title: element.title,
-        description: element.description,
-        picture: element.picture
-      }));
-      res.send(listOfCourse);
-    }
+      if (id != null) {
+        const courseObj = await CourseModel.findById(id);
+        const listOfCourse = [{
+          id: courseObj._id,
+          title: courseObj.title,
+          description: courseObj.description,
+          picture: courseObj.picture
+        }];
+        console.log(listOfCourse)
+        res.send(listOfCourse);
+      }
+      else {
+        const courseObj = await CourseModel.find();
+        const listOfCourse = courseObj.map(element => ({
+          id: element._id,
+          title: element.title,
+          description: element.description,
+          picture: element.picture
+        }));
+        res.send(listOfCourse);
+      }
     } catch (error) {
       console.error("Error retrieving course list:", error);
       res.status(500).send("An error occurred while retrieving course list");
@@ -211,26 +212,26 @@ module.exports = {
     const mediaPath = req.file ? req.file.path : null;
     const postObj = new PostModel({ userId: author, postContent: content, postMedia: mediaPath });
     postObj.save();
-  
+
     const filename = postObj.postMedia.split('/').pop(); // Extract filename from the path
     const mediaURL = `http://localhost:3001/${filename}`; // Construct the URL
     let updatedPostObj = { ...postObj.toObject(), mediaURL }; // Use let instead of const
-  
+
     res.send(updatedPostObj);
   },
-  
+
 
   getPost: async (req, res) => {
     try {
       const posts = await PostModel.find();
-  
+
       // Extract filename from postMedia path and construct the URL
       const postsWithMediaURL = posts.map(post => {
         const filename = post.postMedia.split('/').pop(); // Extract filename from the path
         const mediaURL = `http://localhost:3001/${filename}`; // Construct the URL
         return { ...post.toObject(), mediaURL }; // Add mediaURL to the post object
       });
-  
+
       console.log(postsWithMediaURL);
       res.send(postsWithMediaURL);
     } catch (error) {
@@ -238,28 +239,28 @@ module.exports = {
       res.status(500).send('Internal Server Error');
     }
   },
-  
+
 
   getCourseDetails: async (req, res) => {
     const { courseId } = req.body;
-    
+
     await CourseModel.findOne({ _id: courseId })
       .then((response) => {
-       
+
         res.send(response)
       }).catch((err) => {
         console.log(err);
       });
   },
-  getCourseData : async (req,res)=>{
+  getCourseData: async (req, res) => {
     try {
       const courseId = req.params.id;
       const course = await CourseModel.findById(courseId);
-  
+
       if (!course) {
         return res.status(404).json({ error: 'Course not found' });
       }
-  
+
       // Map course contents to course structure
       const courseStructure = course.contents.map(directory => ({
         title: directory.dir_name,
@@ -286,66 +287,83 @@ module.exports = {
       res.status(500).json({ error: 'Internal server error' });
     }
   },
-  
-  compiler : async(req,res)=>{
-    let code = req.body.code; 
-    let language = req.body.language; 
-    let input = req.body.input; 
+
+  compiler: async (req, res) => {
+    let code = req.body.code;
+    let language = req.body.language;
+    let input = req.body.input;
     let file_name = req.body.file_name;
     if (language == 'python')
-        language = 'python3'
-   
-    let data = ({ 
+      language = 'python3'
+
+    let data = ({
       language: language,
       version: 'latest',
       code: code,
       input: input
-    }); 
-    let config = { 
-        method: 'post', 
-        url: 'https://online-code-compiler.p.rapidapi.com/v1/', 
-        headers: { 
-            'Content-Type': 'application/json',
-            'X-RapidAPI-Key': `${process.env.COMPILER}`,
-            'X-RapidAPI-Host': 'online-code-compiler.p.rapidapi.com'
-        }, 
-        data: data 
-    }; 
-    Axios(config) 
-        .then((response) => { 
-            res.send(response.data) 
-        }).catch((error) => { 
-            console.log(error); 
-        }); 
+    });
+    let config = {
+      method: 'post',
+      url: 'https://online-code-compiler.p.rapidapi.com/v1/',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-RapidAPI-Key': `${process.env.COMPILER}`,
+        'X-RapidAPI-Host': 'online-code-compiler.p.rapidapi.com'
+      },
+      data: data
+    };
+    Axios(config)
+      .then((response) => {
+        res.send(response.data)
+      }).catch((error) => {
+        console.log(error);
+      });
   },
-  saveCode :async (req,res)=>{
-      const requestData = req.body
-      const codeObj = await CodeModel(requestData)
+  saveCode: async (req, res) => {
+    const requestData = req.body
+    const codeObj = await CodeModel(requestData)
 
-      codeObj.saveData()
-      res.send("code saved")
+    codeObj.saveData()
+    res.send("code saved")
   },
   setCourseEnroll: async (req, res) => {
     const requestData = req.body;
     console.log(req.body);
-  
+
     try {
       const course = await CourseModel.findById(requestData.courseId);
-      if (!course) {
-        return res.status(404).send("Course not found");
-      }
-  
+
+      const enrollmentContents = [];
+      
+      course.contents.forEach(directory => {
+        directory.files.forEach(file => {
+            enrollmentContents.push({
+                dir_id: directory._id.toString(), // Assuming directory ID is stored in _id field
+                files: [{
+                    file_id: file._id.toString(),
+                    marks: 0, // Set initial marks to 0
+                    viewed: false // Set initial viewed status to false
+                }]
+            });
+        });
+    });
+      
+      
+      
       const enrollment = await EnrollModel.findOne({
         courseId: requestData.courseId,
-        email: requestData.email 
+        email: requestData.email
       });
-  
+      
       if (!enrollment) {
+        console.log(enrollmentContents)
         const newEnrollment = new EnrollModel({
           courseId: requestData.courseId,
-          email: requestData.email 
-        });
-        await newEnrollment.save();
+          contents: enrollmentContents,
+          email: requestData.email
+      });
+      
+      await newEnrollment.save();
         console.log("Enrollment saved");
         return res.send("Enrollment saved");
       } else {
@@ -359,37 +377,37 @@ module.exports = {
   },
   getEnrolledCourse: async (req, res) => {
     try {
-        const requestData = req.body.email;
-        console.log(requestData);
-        
-        const enrolledCourses = await EnrollModel.find({ email: requestData });
-        console.log(enrolledCourses)
-        const response = await Promise.all(enrolledCourses.map(async course => {
+      const requestData = req.body.email;
+      console.log(requestData);
+
+      const enrolledCourses = await EnrollModel.find({ email: requestData });
+      console.log(enrolledCourses)
+      const response = await Promise.all(enrolledCourses.map(async course => {
         const courseDetails = await CourseModel.findOne({ _id: course.courseId });
 
-            return {
-                id: courseDetails._id,
-                title: courseDetails.title,
-                description: courseDetails.description
-            };
-        }));
+        return {
+          id: courseDetails._id,
+          title: courseDetails.title,
+          description: courseDetails.description
+        };
+      }));
 
-        res.send(response);
+      res.send(response);
     } catch (error) {
-        console.error("Error retrieving enrolled courses:", error);
-        res.status(500).send("Internal server error");
+      console.error("Error retrieving enrolled courses:", error);
+      res.status(500).send("Internal server error");
     }
   },
-  getOwnCourse: async(req,res)=>{
+  getOwnCourse: async (req, res) => {
     const courseDetails = await CourseModel.find({ creator: req.body.email });
     console.log(courseDetails)
     res.send(courseDetails);
   },
-  getCourseTitles : async(req,res)=>{
+  getCourseTitles: async (req, res) => {
     const courseDetails = await CourseModel.find();
     titleData = []
-    courseDetails.forEach((course)=>{
-      titleData.push({id:course._id,title:course.title});
+    courseDetails.forEach((course) => {
+      titleData.push({ id: course._id, title: course.title });
     })
     res.send(titleData)
   },
@@ -398,57 +416,88 @@ module.exports = {
     const id = req.body.course_id;
     const dirName = req.body.node;
     const fileName = req.body.childNode;
-  
+
     try {
       const course = await CourseModel.findById(id);
-  
+
       if (!course) {
         return res.status(404).json({ error: 'Course not found' });
       }
-  
+
       const directory = course.contents.find(directory => directory.dir_name === dirName);
-  
+
       if (!directory) {
         return res.status(404).json({ error: 'Directory not found' });
       }
-  
+
       const file = directory.files.find(file => file.file_name === fileName);
       const dirId = directory._id
       if (!file) {
         return res.status(404).json({ error: 'File not found' });
       }
-  
+
       // Return the details of the found file
-      res.json({ file ,dir_id:dirId});
+      res.json({ file, dir_id: dirId });
     } catch (error) {
       console.error('Error finding file details:', error);
       res.status(500).json({ error: 'Internal server error' });
     }
-  
 
-  }, 
-  searchCourse : async(req,res)=>{
+
+  },
+  searchCourse: async (req, res) => {
     console.log(req.body.q)
-    const courseDetails = await CourseModel.find({ $text:{$search:req.body.q}});
+    const courseDetails = await CourseModel.find({ $text: { $search: req.body.q } });
     console.log(courseDetails)
     res.send(courseDetails)
   },
 
-  chatBot : async(req,res)=>{
+  chatBot: async (req, res) => {
 
     response = await bot(req.body.text)
     res.send(response);
   },
-  submitQuiz : async(req,res)=>{
-    reqData = req.body;
-    console.log(reqData)
-    res.send(reqData)
-  },
+  submitQuiz: async (req, res) => {
 
-  getUserPost: async(req,res)=>{
+    const { user_id, answer, course_id, file_id } = req.body;
+    console.log(course_id);
+
+    console.log(file_id);
+    try {
+        // Find the enrolled course based on course_id and user_id
+        const enrolledCourse = await EnrollModel.findOne({ courseId: course_id, email: user_id });
+        
+        if (!enrolledCourse) {
+            return res.status(404).json({ message: 'Enrolled course not found.' });
+        }
+        
+        const contentIndex = enrolledCourse.contents.findIndex(content => content.files.some(file => file.file_id === file_id));
+        if (contentIndex === -1) {
+            return res.status(404).json({ message: 'File not found in enrolled course contents.' });
+        }
+
+        const fileIndex = enrolledCourse.contents[contentIndex].files.findIndex(file => file.file_id === file_id);
+
+        // Update marks and viewed status
+        enrolledCourse.contents[contentIndex].files[fileIndex].marks = 100; // Set marks as needed
+        enrolledCourse.contents[contentIndex].files[fileIndex].viewed = true;
+
+        // Save the updated enrolled course back to the database
+        await enrolledCourse.save();
+
+        return res.status(200).json({ message: 'Quiz submitted successfully.' });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: 'Internal server error.' });
+    }
+}
+,
+
+
+  getUserPost: async (req, res) => {
     uid = req.body.uid;
     console.log(uid)
-    const posts = await PostModel.find({userId:uid})
+    const posts = await PostModel.find({ userId: uid })
     const postsWithMediaURL = posts.map(post => {
       const filename = post.postMedia.split('/').pop(); // Extract filename from the path
       const mediaURL = `http://localhost:3001/${filename}`; // Construct the URL
@@ -459,17 +508,42 @@ module.exports = {
     res.send(postsWithMediaURL);
   },
 
-  getPostData: async(req,res)=>{
+  getPostData: async (req, res) => {
     pid = req.params.id;
     console.log(pid)
     const postObj = await PostModel.findById(pid)
-    const filename = postObj.postMedia.split('/').pop(); 
-    const mediaURL = `http://localhost:3001/${filename}`; 
-    let updatedPostObj = { ...postObj.toObject(), mediaURL }; 
-    console.log(updatedPostObj)
+    const filename = postObj.postMedia.split('/').pop();
+    const mediaURL = `http://localhost:3001/${filename}`;
+    let updatedPostObj = { ...postObj.toObject(), mediaURL };
     res.send(updatedPostObj);
 
-   
+
+  },
+  getUserData: async (req, res) => {
+    const email = req.body.uid;
+    const user = await UserModel.findOne({ email: email });
+
+    // Get the length of followers and following arrays
+    const followersCount = user.followers.length;
+    const followingCount = user.following.length;
+
+    // Construct the response object with user data and counts
+    const userDataWithCounts = {
+      user: user,
+      followersCount: followersCount,
+      followingCount: followingCount
+    };
+
+    res.send(userDataWithCounts);
+  },
+  setUserData: async (req, res) => {
+    const { id, name, bio, city } = req.body;
+    const user = await UserModel.findOneAndUpdate(
+      { email: id }, // Assuming id is the ID of the user you want to update
+      { name: name, bio: bio, city: city },
+      { new: true } // To return the updated document
+    );
+    res.send(user)
   }
 };
 

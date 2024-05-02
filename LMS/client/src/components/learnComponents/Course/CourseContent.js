@@ -1,6 +1,6 @@
 import { React, useState, useEffect } from "react";
 import CardMedia from "@mui/material/CardMedia";
-import { Box, Button, Typography } from "@mui/material";
+import { Box, Button, Typography, TextField } from "@mui/material";
 import { TreeItem, TreeView } from "@mui/x-tree-view";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
@@ -63,30 +63,37 @@ export default function CourseContent(props) {
           });
         }
       });
-  
+    
       // Construct payload to send to server
       const payload = {
         user_id: userData, // Assuming you have a userId to associate with the quiz answers
         answers: userAnswers,
         course_id: courseData._id,
-        file_id:fileId
-
+        file_id: fileId,
       };
-  
+    
       // Make POST request to server
       axios.post('http://localhost:3001/submit_quiz', payload)
         .then(response => {
           console.log('Quiz answers submitted successfully:', response.data);
-          // Optionally, you can perform actions based on the server response
+    
+          // Update the courseData state to reflect the quiz submission
+          setCourseData(prevCourseData => {
+            const updatedFile = { ...prevCourseData.contents.find(content => content._id === fileId), quizSubmitted: true };
+            const updatedContents = prevCourseData.contents.map(content => content._id === fileId ? updatedFile : content);
+            return { ...prevCourseData, contents: updatedContents };
+          });
+          console.log(courseData)
+    
         })
         .catch(error => {
           console.error('Error submitting quiz answers:', error);
         });
-      }
+    }
     return (
-      <div>
+      <Box>
         {quizData.map((item, index) => (
-          <div key={item._id}>
+          <Box key={item._id}>
             <h3>Question {index + 1}</h3>
             <p>{item.question}</p>
             {/* Render options */}
@@ -100,25 +107,72 @@ export default function CourseContent(props) {
                 </li>
               ))}
             </ul>
-          </div>
+          </Box>
         ))}
         <Button variant="contained" onClick={handleQuizSubmit}>Submit</Button>
-      </div>
+      </Box>
     );
   };
   const TabPanel = ({ value, index, children }) => {
     return (
-      <div role="tabpanel" hidden={value !== index}>
+      <Box role="tabpanel" hidden={value !== index}>
         {value === index && (
           <Box p={3}>
             {children}
           </Box>
         )}
-      </div>
+      </Box>
     );
   };
-  
-  const sidebarWidth = open ? 230 : 100;
+  const Discussion = () => {
+    const [comment, setComment] = useState('');
+    const [discussion, setDiscussion] = useState([]);
+    console.log(discussion);
+    const handleCommentChange = (event) => {
+        setComment(event.target.value);
+    };
+
+    const handleSubmit = () => {
+      if (comment.trim() !== '') {
+          setDiscussion([
+              ...discussion,
+              {
+                  id: discussion.length + 1,
+                  text: comment,
+                  // You can add additional properties here if needed
+              }
+          ]);
+          setComment('');
+      }
+  };
+    const handleKeyPress = (e)=>{
+      if(e.code == 'Enter'){
+        handleSubmit()
+      }
+    }
+
+    return (
+        <Box>
+            <Box height={'200px'} sx={{overflowY:"scroll"}}>
+            {discussion.map((comment) => (
+                    <Typography padding={'5px'} key={comment.id}>{comment.id}{comment.text}</Typography>
+                ))}
+            </Box>
+            <Box>
+                <TextField
+                    label="Comment"
+                    variant="outlined"
+                    value={comment}
+                    onChange={handleCommentChange}
+                    fullWidth
+                    onKeyUp={handleKeyPress}
+                />
+                
+            </Box>
+        </Box>
+    );
+};
+const sidebarWidth = open ? 230 : 100;
 
   return (
     <>
@@ -156,6 +210,7 @@ export default function CourseContent(props) {
               {courseData && courseData.contents.map((content, index) => (
                 <TreeItem key={index} nodeId={index.toString()} label={content.dir_name}>
                   {content.files.map((file, idx) => (
+                    
                     <TreeItem
                       key={idx}
                       nodeId={`${index}-${idx}`}
@@ -185,9 +240,8 @@ export default function CourseContent(props) {
             <Quiz quizData={quiz} />
           </TabPanel>
           <TabPanel value={value} index="3">
-            Item Three
+           <Discussion/>
           </TabPanel>
-
         </TabContext>
       </Box>
     </>

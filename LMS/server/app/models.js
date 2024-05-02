@@ -6,7 +6,10 @@ const userSchema = new Schema({
     email: { type: String, unique:true, required:true },
     password:{type:String,default:''},
     profilePic: { type: String, default: '' },
-    bio:{type:String},
+    bio:{type:String, default: ''},
+    city:{type:String},
+    followers:[],
+    following:[],
 });
 
 userSchema.method({
@@ -88,11 +91,12 @@ const courseEnrollSchema = new Schema({
     courseId : {type:String},
     contents:[
         {
-            dir_name:{type:String},
+            dir_id:{type:String},
             files:[
                 {
-                fileName:{type:String},
-                marks:{type:Number}
+                file_id:{type:String},
+                marks:{type:Number},
+                viewed:{type:Boolean},
                 }
             ]
         }

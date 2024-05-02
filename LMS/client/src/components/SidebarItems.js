@@ -77,61 +77,7 @@ export default function SidebarItems(props) {
             </ListItemButton>
           </ListItem>
         </Link>
-        <Link to="/subscribed" style={{ textDecoration: "none"}}>
-          <ListItem disablePadding sx={{ display: "block" }}>
-            <ListItemButton
-              sx={{
-                minHeight: 48,
-                justifyContent: open ? "initial" : "center",
-                px: 2.5,
-                display:"flex",
-                maxWidth: open ?  "none": "60px !important",
-              }}
-            >
-              <ListItemIcon
-                sx={{
-                  minWidth: 0,
-                  mr: open ? 3 : "auto",
-                  justifyContent: "center",
-                }}
-              >
-                <SubscriptionsRoundedIcon />
-              </ListItemIcon>
-              <ListItemText
-                primary={"Subscribed"}
-                sx={{ opacity: open ? 1 : 0 }}
-              />
-            </ListItemButton>
-          </ListItem>
-        </Link>
-        <Link to="/saved" 
-        style={{ textDecoration: "none",
         
-       
-        }}>
-          <ListItem disablePadding sx={{ display: "block" }}>
-            <ListItemButton
-              sx={{
-                minHeight: 48,
-                justifyContent: open ? "initial" : "center",
-                px: 2.5,
-                display:"flex",
-                maxWidth: open ?  "none": "60px !important",
-              }}
-            >
-              <ListItemIcon
-                sx={{
-                  minWidth: 0,
-                  mr: open ? 3 : "auto",
-                  justifyContent: "center",
-                }}
-              >
-                <BookmarkIcon />
-              </ListItemIcon>
-              <ListItemText primary={"Saved"} sx={{ opacity: open ? 1 : 0 }} />
-            </ListItemButton>
-          </ListItem>
-        </Link>
         <Link to="/mylearning" 
         style={{ textDecoration: "none",
         
