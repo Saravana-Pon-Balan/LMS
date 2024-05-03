@@ -1,6 +1,5 @@
-// ContactList.js
-import React from 'react';
-import { List, ListItem, ListItemText } from '@mui/material';
+import React, { useState } from 'react';
+import { List, ListItem, ListItemText, TextField } from '@mui/material';
 
 const contacts = [
   { id: 1, name: 'John Doe' },
@@ -9,15 +8,35 @@ const contacts = [
 ];
 
 const ContactList = ({ onSelectContact }) => {
+  const [searchTerm, setSearchTerm] = useState('');
+  
+  const handleSearch = (event) => {
+    setSearchTerm(event.target.value);
+  };
+
+  const filteredContacts = contacts.filter(contact =>
+    contact.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   return (
-    
-    <List>
-      {contacts.map(contact => (
-        <ListItem key={contact.id} onClick={() => onSelectContact(contact)}>
-          <ListItemText primary={contact.name} />
-        </ListItem>
-      ))}
-    </List>
+    <div>
+      <TextField
+        id="search"
+        label="Search contacts"
+        variant="outlined"
+        value={searchTerm}
+        onChange={handleSearch}
+        fullWidth
+        margin="normal"
+      />
+      <List>
+        {filteredContacts.map(contact => (
+          <ListItem key={contact.id} onClick={() => onSelectContact(contact)}>
+            <ListItemText primary={contact.name} />
+          </ListItem>
+        ))}
+      </List>
+    </div>
   );
 };
 

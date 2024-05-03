@@ -67,7 +67,7 @@ export default function CourseContent(props) {
       // Construct payload to send to server
       const payload = {
         user_id: userData, // Assuming you have a userId to associate with the quiz answers
-        answers: userAnswers,
+        answers: userAnswer,
         course_id: courseData._id,
         file_id: fileId,
       };
