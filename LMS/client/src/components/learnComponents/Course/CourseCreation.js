@@ -16,6 +16,7 @@ function CourseCreationPage() {
   const [newDirectoryName, setNewDirectoryName] = useState("");
   const [openQuizDialog, setOpenQuizDialog] = useState(false);
   const [quizQuestions, setQuizQuestions] = useState([]);
+  console.log(quizQuestions)
   const [changeFileId, setChangeFileId] = useState("");
   const [directoryId, setDirectoryId] = useState("");
 

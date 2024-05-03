@@ -18,8 +18,8 @@ const router = (app) =>{
     app.post('/submit_quiz',Controller.submitQuiz);
     app.post('/compile',Controller.compiler);
     app.post('/save_code',Controller.saveCode);
-
-
+    app.post('/get_view_status',Controller.getViewStatus);
+    app.post('/set_comment',Controller.setComment);
     app.post('/chatbot',Controller.chatBot);
 
     app.post('/upload_posts',Controller.uploadFiles,Controller.addPost);
@@ -28,6 +28,8 @@ const router = (app) =>{
     app.post('/get_user_post',Controller.getUserPost);
     app.post('/get_user_data',Controller.getUserData);
     app.post('/set_user_data',Controller.setUserData);
+
+    app.get('/search_chat_user/:name',Controller.searchChatUser);
 
     app.get('/:id?',Controller.courseList);
 

@@ -109,6 +109,19 @@ courseEnrollSchema.method({
     }
 });
 
+const chatSchema = new Schema(
+    {
+        conversation_id: {Type:Number},
+        members: [{Type:String}],
+        messages: [
+          {
+             sender: {Type:String}, 
+             message: {Type:String}, 
+             timestamp: time
+          },
+        ],
+    }
+)
 
 const Models = {
     userModel: mongoose.model('UserData', userSchema),

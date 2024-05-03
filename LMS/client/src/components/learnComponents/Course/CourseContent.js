@@ -1,6 +1,6 @@
-import { React, useState, useEffect } from "react";
+import { React, useState, useEffect,useRef } from "react";
 import CardMedia from "@mui/material/CardMedia";
-import { Box, Button, Typography, TextField } from "@mui/material";
+import { Box, Button, Typography, TextField, Divider } from "@mui/material";
 import { TreeItem, TreeView } from "@mui/x-tree-view";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
@@ -10,6 +10,7 @@ import TabList from '@mui/lab/TabList';
 import TabPanel from '@mui/lab/TabPanel';
 import axios from 'axios';
 import { useParams } from "react-router-dom";
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 
 export default function CourseContent(props) {
   const { open, userData } = props;
@@ -17,38 +18,85 @@ export default function CourseContent(props) {
   const [videoUrl, setVideoUrl] = useState('');
   const [captions, setCaptions] = useState('');
   const [courseData, setCourseData] = useState(null);
-  const [quiz, setQuiz] = useState([]);
+  const [quiz, setQuiz] = useState();
   const [fileId, setFileId] = useState("");
   const [discussion, setDiscussion] = useState([]);
-
+  const [ticFile, setTicFile] = useState();
+  const [dirId,setDirId] = useState("");
   const { id } = useParams();
-
+  const treeRef = useRef(null)
+  console.log("cdata",courseData);
   useEffect(() => {
-    axios.get(`http://localhost:3001/course_content/${id}`)
-      .then(response => {
-        setCourseData(response.data);
-
+    const getCourse = async()=>{
+      console.log("1st")
+      await axios.get(`http://localhost:3001/course_content/${id}`)
+      .then((response) => {
+        setCourseData(response.data)
       })
       .catch(error => {
         console.error('Error fetching course content:', error);
       });
-  }, [id]);
+    }
+      getCourse()
+  }, []);
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
+  useEffect(() => {
+    console.log("2nd")
+    const getViewStatus = async () => {
+        const response = await axios.post("http://localhost:3001/get_view_status", {
+            cid: id,
+            uid: userData
+        });
+        // Extract the viewed status data from the response
+        const viewedStatusData = response.data.contents;
 
+        // Update the course data with viewed status
+        const updatedCourseData = courseData?.contents.map(directory => {
+            const viewedStatus = viewedStatusData.find(status => status.dir_id === directory._id);
+            if (viewedStatus) {
+                directory.files.forEach(file => {
+                    const fileStatus = viewedStatus.files.find(fileStatus => fileStatus.file_id === file._id);
+                    if (fileStatus) {
+                        file.viewed = fileStatus.viewed;
+                    }
+                });
+            }
+            return directory;
+        });
+        if (courseData) {
+          const unviewedFile = courseData.contents.find(content =>
+            content.files.some(file =>!file.viewed)
+          );
+          console.log(unviewedFile)
+            setDirId(unviewedFile._id);
+          if (unviewedFile) {
+            console.log(unviewedFile);
+            const firstUnviewedFile = unviewedFile.files.find(file =>!file.viewed);
+            handleFileClick(firstUnviewedFile,dirId);
+          }
+        }
+        // Do something with the updatedCourseData (e.g., set it to state)
+    };
 
+    getViewStatus();
+  }, [quiz,courseData]);
 
+ 
 
-  const handleFileClick = (file) => {
+  const handleFileClick =(file,dir_id) => {
+    console.log(file)
+
+    console.log("dir:",dir_id);
     setVideoUrl("http://localhost:3001/" + file.media_path.split('/').pop());
-    console.log(file);
     setQuiz(file.quizes);
     setDiscussion(file.discussion);
     setCaptions(file.caption);
     setFileId(file._id);
+    setDirId(dir_id)
   };
-  console.log(courseData)
+
 
   const Quiz = ({ quizData }) => {
     const handleQuizSubmit = () => {
@@ -63,28 +111,26 @@ export default function CourseContent(props) {
           });
         }
       });
-    
+
       // Construct payload to send to server
       const payload = {
         user_id: userData, // Assuming you have a userId to associate with the quiz answers
-        answers: userAnswer,
+        answers: userAnswers,
         course_id: courseData._id,
         file_id: fileId,
       };
-    
+
       // Make POST request to server
       axios.post('http://localhost:3001/submit_quiz', payload)
         .then(response => {
-          console.log('Quiz answers submitted successfully:', response.data);
-    
-          // Update the courseData state to reflect the quiz submission
+
+          setTicFile(fileId);
           setCourseData(prevCourseData => {
             const updatedFile = { ...prevCourseData.contents.find(content => content._id === fileId), quizSubmitted: true };
             const updatedContents = prevCourseData.contents.map(content => content._id === fileId ? updatedFile : content);
             return { ...prevCourseData, contents: updatedContents };
           });
-          console.log(courseData)
-    
+
         })
         .catch(error => {
           console.error('Error submitting quiz answers:', error);
@@ -126,53 +172,65 @@ export default function CourseContent(props) {
   };
   const Discussion = () => {
     const [comment, setComment] = useState('');
-    const [discussion, setDiscussion] = useState([]);
-    console.log(discussion);
     const handleCommentChange = (event) => {
-        setComment(event.target.value);
+      setComment(event.target.value);
     };
 
-    const handleSubmit = () => {
+    const handleSubmit = async() => {
       if (comment.trim() !== '') {
+        const data = {
+          cid : id,
+          uid: userData,
+          dir_id: dirId,
+          file_id:fileId,
+          text: comment,
+
+        }
+        await axios.post("http://localhost:3001/set_comment",data)
+        .then(()=>{
           setDiscussion([
-              ...discussion,
-              {
-                  id: discussion.length + 1,
-                  text: comment,
-                  // You can add additional properties here if needed
-              }
+            ...discussion,
+            data
           ]);
           setComment('');
+
+        })
+        
       }
-  };
-    const handleKeyPress = (e)=>{
-      if(e.code == 'Enter'){
+    };
+    const handleKeyPress = (e) => {
+      if (e.code == 'Enter') {
         handleSubmit()
       }
     }
 
     return (
-        <Box>
-            <Box height={'200px'} sx={{overflowY:"scroll"}}>
-            {discussion.map((comment) => (
-                    <Typography padding={'5px'} key={comment.id}>{comment.id}{comment.text}</Typography>
-                ))}
-            </Box>
+      <Box>
+        <Box height={'200px'} sx={{ overflowY: "scroll" }}>
+          {discussion.map((comment) => (
             <Box>
-                <TextField
-                    label="Comment"
-                    variant="outlined"
-                    value={comment}
-                    onChange={handleCommentChange}
-                    fullWidth
-                    onKeyUp={handleKeyPress}
-                />
-                
+            <Typography padding={'5px'} key={comment.uid}>{comment.user_name}:{comment.comment}</Typography>
+            <Divider></Divider>
             </Box>
+          ))}
         </Box>
+        <Box>
+          <TextField
+            label="Comment"
+            variant="outlined"
+            value={comment}
+            onChange={handleCommentChange}
+            fullWidth
+            onKeyUp={handleKeyPress}
+          />
+
+        </Box>
+      </Box>
     );
-};
-const sidebarWidth = open ? 230 : 100;
+  };
+  const sidebarWidth = open ? 230 : 100;
+
+  
 
   return (
     <>
@@ -188,7 +246,7 @@ const sidebarWidth = open ? 230 : 100;
       >
         <CardMedia
           component="video"
-          sx={{ width: "100%", height: "100%", flexGrow: "2" }}
+          sx={{ width: "60%", height: "60%", flexGrow: "2" }}
           src={videoUrl}
           controls
           alt="Course video"
@@ -199,6 +257,7 @@ const sidebarWidth = open ? 230 : 100;
             List of Contents
           </Typography>
           <Box>
+            <Divider></Divider>
             <TreeView
               aria-label="file system navigator"
               defaultCollapseIcon={<ExpandMoreIcon />}
@@ -208,15 +267,18 @@ const sidebarWidth = open ? 230 : 100;
             >
               {/* Render tree view items based on 'files' state */}
               {courseData && courseData.contents.map((content, index) => (
-                <TreeItem key={index} nodeId={index.toString()} label={content.dir_name}>
+                <TreeItem key={index} nodeId={index.toString()} label={content.dir_name} id={content._id}>
                   {content.files.map((file, idx) => (
-                    
-                    <TreeItem
-                      key={idx}
-                      nodeId={`${index}-${idx}`}
-                      label={file.file_name}
-                      onClick={() => handleFileClick(file)}
-                    />
+                    <Box display={'flex'}>
+                      <TreeItem
+                        key={idx}
+                        nodeId={`${index}-${idx}`}
+                        label={file.file_name}
+                        onClick={() => handleFileClick(file,content._id)}
+                        ref={treeRef}
+/>
+                       {file.viewed?<CheckCircleIcon color="success"/>:""}
+                    </Box>
                   ))}
                 </TreeItem>
               ))}
@@ -240,7 +302,7 @@ const sidebarWidth = open ? 230 : 100;
             <Quiz quizData={quiz} />
           </TabPanel>
           <TabPanel value={value} index="3">
-           <Discussion/>
+            <Discussion />
           </TabPanel>
         </TabContext>
       </Box>

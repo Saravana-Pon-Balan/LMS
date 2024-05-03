@@ -9,8 +9,18 @@ const CourseList = (props) => {
   useEffect(() => {
     const getCourse = async () => {
       try {
+        console.log(search)
+        if(search == ""){
+          const response = await axios.get(`http://localhost:3001`);
+          setCourses(response.data);
+          search = ""
+
+        }
+        else{
         const response = await axios.get(`http://localhost:3001/${search}`);
         setCourses(response.data);
+        search = ""
+        }
       } catch (error) {
         console.log(error);
       }

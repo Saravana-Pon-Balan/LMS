@@ -171,7 +171,6 @@ module.exports = {
       console.error("Error adding file:", error);
       res.status(500).send("An error occurred while adding file");
     }
-    res.send("hi")
   },
 
   uploadFiles: upload.single("media"),
@@ -398,6 +397,13 @@ module.exports = {
       res.status(500).send("Internal server error");
     }
   },
+  getViewStatus:async(req,res)=>{
+    const {cid,uid} = req.body;
+    const enrolledData = await EnrollModel.findOne({courseId:cid,email:uid});
+    console.log(enrolledData)
+    res.send(enrolledData)
+  },
+
   getOwnCourse: async (req, res) => {
     const courseDetails = await CourseModel.find({ creator: req.body.email });
     console.log(courseDetails)
@@ -490,9 +496,43 @@ module.exports = {
         console.error(error);
         return res.status(500).json({ message: 'Internal server error.' });
     }
-}
-,
+},
+ setComment : async (req, res) => {
+  try {
+      const { cid, uid, dir_id, file_id, text } = req.body;
+      // Find the course document
+      const user = await UserModel.findOne({email:uid});
+      const name = user.name;
+      console.log(name)
+      const course = await CourseModel.findById(cid);
+      if (!course) {
+          return res.status(404).json({ error: "Course not found" });
+      }
 
+      // Find the directory within contents array
+      const directory = course.contents.find(dir => dir._id.toString() === dir_id);
+      if (!directory) {
+          return res.status(404).json({ error: "Directory not found" });
+      }
+
+      // Find the file within files array
+      const file = directory.files.find(f => f._id.toString() === file_id);
+      if (!file) {
+          return res.status(404).json({ error: "File not found" });
+      }
+
+      // Push the new comment to the discussion array of the file
+      file.discussion.push({ user_name: name, comment: text });
+
+      // Save the updated course document
+      await course.save();
+
+      res.status(200).json({ message: "Comment added successfully" });
+  } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: "Internal server error" });
+  }
+},
 
   getUserPost: async (req, res) => {
     uid = req.body.uid;
@@ -544,6 +584,11 @@ module.exports = {
       { new: true } // To return the updated document
     );
     res.send(user)
+  },
+  searchChatUser: async(req,res)=>{
+    const name = req.params.name;
+    const user = UserModel.findOne({name:name});
+    console.log(user);
   }
 };
 
