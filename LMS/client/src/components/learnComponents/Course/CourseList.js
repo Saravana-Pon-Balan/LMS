@@ -11,13 +11,13 @@ const CourseList = (props) => {
       try {
         console.log(search)
         if(search == ""){
-          const response = await axios.get(`http://localhost:3001`);
+          const response = await axios.get(`http://localhost:3001/course`);
           setCourses(response.data);
           search = ""
 
         }
         else{
-        const response = await axios.get(`http://localhost:3001/${search}`);
+        const response = await axios.get(`http://localhost:3001/course/${search}`);
         setCourses(response.data);
         search = ""
         }

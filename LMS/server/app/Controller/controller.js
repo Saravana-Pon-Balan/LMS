@@ -10,11 +10,13 @@ require('dotenv').config()
 const SaveToSheet = require('../chatbot/savetosheet');
 
 
+
 const UserModel = Models.userModel;
 const CourseModel = Models.courseModel;
 const EnrollModel = Models.courseEnrollModel;
 const CodeModel = Models.codeModel;
 const PostModel = Models.postModel;
+const ChatModel = Models.ChatModel;
 
 const Coursestorage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -179,7 +181,7 @@ module.exports = {
     try {
       const id = req.params.id ? req.params.id : null;
       console.log(id)
-      if (id != null) {
+      if (id !== null) {
         const courseObj = await CourseModel.findById(id);
         const listOfCourse = [{
           id: courseObj._id,
@@ -586,10 +588,70 @@ module.exports = {
     res.send(user)
   },
   searchChatUser: async(req,res)=>{
-    const name = req.params.name;
-    const user = UserModel.findOne({name:name});
-    console.log(user);
-  }
+    const uname = req.params.name;
+    console.log(uname)
+    const users = await UserModel.find({ name: { $regex: uname, $options: 'i' } });
+    res.send(users)
+  },
+  sendMessage: async (req, res) => {
+    try {
+        const { sender, receiver, text } = req.body;
+        const sender_user = await UserModel.findOne({email:sender})
+        const sender_name = sender_user.name
+
+        let chatObj = await ChatModel.findOne({ members: { $all: [sender_name, receiver] } });
+        if (!chatObj) {
+            chatObj = await ChatModel.create({ members: [sender_name, receiver], messages: [{ sender, message: text }] });
+        } else {
+            // Add message to the chat object
+            chatObj.messages.push({ sender, message: text });
+            // Save the chat object
+            await chatObj.save();
+        }
+
+        // Return success response
+        res.status(200).json({ message: 'Message sent successfully', chat: chatObj });
+    } catch (error) {
+        // Handle errors
+        console.error(error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+  },
+  listUserData: async (req, res) => {
+    try {
+        const emailId = req.params.emailId;
+        const user = await UserModel.findOne({email:emailId});
+        const uname = user.name
+        const chatRooms = await ChatModel.find({ members: uname });
+        if (!chatRooms) {
+            return res.status(404).json({ message: "No chat rooms found for the user." });
+        }
+
+        const otherUserNames = chatRooms.map(room => {
+            const otherMembers = room.members.filter(member => member !== uname); // Exclude the user's own email ID
+            return otherMembers;
+        });
+        response = []
+        otherUserNames.forEach((user,i) => {
+          response.push({
+            id : chatRooms[i]._id,
+            name : user[0],
+        })
+
+        });
+        res.send(response);
+    } catch (error) {
+        console.error("Error fetching user data:", error);
+        return res.status(500).json({ message: "Internal server error" });
+    }
+  },
+  getMessage: async (req,res)=>{
+    const id = req.params.id;
+    const chatData = await ChatModel.findById(id);
+    const response = chatData.messages
+    res.send(response)
+  },
+
 };
 
 

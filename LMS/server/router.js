@@ -30,8 +30,12 @@ const router = (app) =>{
     app.post('/set_user_data',Controller.setUserData);
 
     app.get('/search_chat_user/:name',Controller.searchChatUser);
+    app.post('/send_message',Controller.sendMessage);
+    app.get('/list_user_data/:emailId',Controller.listUserData);
+    app.get('/get_message/:id',Controller.getMessage);
 
-    app.get('/:id?',Controller.courseList);
+
+    app.get('/course/:id?',Controller.courseList);
 
 
 };

@@ -1,25 +1,43 @@
-import React, { useState } from 'react';
-import { List, ListItem, ListItemText, TextField } from '@mui/material';
+import React, { useEffect, useState } from 'react';
+import { List, ListItem, ListItemText, TextField, Box ,Divider} from '@mui/material';
+import axios from 'axios';
 
-const contacts = [
-  { id: 1, name: 'John Doe' },
-  { id: 2, name: 'Jane Smith' },
-  { id: 3, name: 'Alice Johnson' },
-];
-
-const ContactList = ({ onSelectContact }) => {
+const ContactList = ({ onSelectContact, userData }) => {
+  const [contacts, setContacts] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
-  
+  console.log(contacts);
+  useEffect(() => {
+    const setUserData = async () => {
+      await axios.get(`http://localhost:3001/search_chat_user/${searchTerm}`)
+        .then((res) => {
+          setContacts(res.data);
+        })
+        .catch((err) => {
+          console.log(err);
+        })
+    }
+    setUserData()
+  }, [searchTerm])
+  useEffect(() => {
+    const getUserData = async () => {
+      await axios.get(`http://localhost:3001/list_user_data/${userData}`)
+        .then((res) => {
+          console.log(contacts);
+          setContacts(res.data);
+        })
+        .catch((err) => {
+          console.log(err);
+        })
+    }
+    getUserData()
+  }, [])
+
   const handleSearch = (event) => {
     setSearchTerm(event.target.value);
   };
 
-  const filteredContacts = contacts.filter(contact =>
-    contact.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
   return (
-    <div>
+    <Box width={'30%'} borderRight={"1px solid black"}>
       <TextField
         id="search"
         label="Search contacts"
@@ -30,13 +48,21 @@ const ContactList = ({ onSelectContact }) => {
         margin="normal"
       />
       <List>
-        {filteredContacts.map(contact => (
-          <ListItem key={contact.id} onClick={() => onSelectContact(contact)}>
-            <ListItemText primary={contact.name} />
-          </ListItem>
-        ))}
+        {contacts.length > 0 ? (
+          contacts.map(contact => (
+            <Box sx={{cursor:"pointer"}}>
+            <ListItem key={contact.id} onClick={() => onSelectContact(contact)}>
+              <ListItemText primary={contact.name} />
+            </ListItem>
+            <Divider></Divider>
+            </Box>
+          ))
+        ) : (
+          <></> 
+        )}
+
       </List>
-    </div>
+    </Box>
   );
 };
 

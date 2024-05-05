@@ -111,17 +111,17 @@ courseEnrollSchema.method({
 
 const chatSchema = new Schema(
     {
-        conversation_id: {Type:Number},
-        members: [{Type:String}],
+        members: [{ type: String }],
         messages: [
-          {
-             sender: {Type:String}, 
-             message: {Type:String}, 
-             timestamp: time
-          },
+            {
+                sender: { type: String },
+                message: { type: String },
+                createdAt: { type: Date, default: Date.now } // Add createdAt field for each message
+            }
         ],
     }
-)
+);
+
 
 const Models = {
     userModel: mongoose.model('UserData', userSchema),
@@ -129,6 +129,8 @@ const Models = {
     codeModel: mongoose.model('CodeData', codeSchema),
     postModel:mongoose.model('PostData',postSchema),
     courseEnrollModel:mongoose.model('enrollData',courseEnrollSchema),
+    ChatModel:mongoose.model('chatData',chatSchema),
+
 
 };
 
