@@ -31,7 +31,7 @@ const Router = (props) => {
 
   return (
     <Routes>
-      <Route exact path="/" element={userData ? <CourseList open={open} search={search}/> : <Navigate to="/login"/>} />
+      <Route exact path="/" element={userData ? <CourseList open={open} search={search} userData={userData}/> : <Navigate to="/login"/>} />
       <Route path="/playground" element={userData ? <Code userData={userData}/> : <Navigate to="/login"/>} />
       <Route path="/saved" element={userData ? <Saved userData={userData}/> : <Navigate to="/login"/>} />
       <Route path="/subscribed" element={userData ? <Subscribed userData={userData}/> : <Navigate to="/login" />} />

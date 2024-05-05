@@ -3,8 +3,24 @@ import axios from "axios";
 import CourseListPage from '../../../pages/course/CourseListPage';
 
 const CourseList = (props) => {
-  const { open, search } = props;
+  const { open, search, userData } = props;
   const [courses, setCourses] = useState([]);
+  const [recommended, setRecommended] = useState([])
+  console.log(recommended)
+  useEffect(()=>{
+    const getRecommendation = async()=>{
+      await axios.post("http://localhost:3001/get_recommend",{
+        email:userData
+      })
+      .then((res)=>{
+        setRecommended(res.data)
+      })
+      .catch((err)=>{
+        console.log(err);
+      })
+    }
+    getRecommendation()
+  },[])
 
   useEffect(() => {
     const getCourse = async () => {
@@ -30,7 +46,7 @@ const CourseList = (props) => {
   }, [search]);
 
   return (
-    <CourseListPage open={open} course={courses} />
+    <CourseListPage open={open} course={courses} recommended={recommended} />
   );
 };
 

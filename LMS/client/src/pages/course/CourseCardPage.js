@@ -10,7 +10,6 @@ import { Link } from 'react-router-dom';
 
 export default function CourseCard(props) {
   let {id,title,description,creator,thumbnail} = props;
-  console.log(thumbnail)
   thumbnail = "http://localhost:3001/"+thumbnail.split('/').pop()
   return (
     
