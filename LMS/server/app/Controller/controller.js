@@ -8,6 +8,7 @@ const Axios = require("axios");
 const bot = require("../chatbot/index");
 require('dotenv').config()
 const SaveToSheet = require('../chatbot/savetosheet');
+const recommend = require('collaborative-filter');
 
 
 
@@ -163,12 +164,13 @@ module.exports = {
         }
         console.log(course)
         await course.save();
+        res.send("File saved")
+
       }
 
       if (!course) {
         return res.status(404).send("Course not found");
       }
-
     } catch (error) {
       console.error("Error adding file:", error);
       res.status(500).send("An error occurred while adding file");
@@ -187,18 +189,23 @@ module.exports = {
           id: courseObj._id,
           title: courseObj.title,
           description: courseObj.description,
-          picture: courseObj.picture
+          picture: courseObj.thumbnail,
+          creator: courseObj.creator,
+
         }];
         console.log(listOfCourse)
         res.send(listOfCourse);
       }
       else {
         const courseObj = await CourseModel.find();
+        console.log(courseObj)
+
         const listOfCourse = courseObj.map(element => ({
           id: element._id,
           title: element.title,
           description: element.description,
-          picture: element.picture
+          picture: element.thumbnail,
+          creator: element.creator,
         }));
         res.send(listOfCourse);
       }
@@ -335,36 +342,36 @@ module.exports = {
       const course = await CourseModel.findById(requestData.courseId);
 
       const enrollmentContents = [];
-      
+
       course.contents.forEach(directory => {
         directory.files.forEach(file => {
-            enrollmentContents.push({
-                dir_id: directory._id.toString(), // Assuming directory ID is stored in _id field
-                files: [{
-                    file_id: file._id.toString(),
-                    marks: 0, // Set initial marks to 0
-                    viewed: false // Set initial viewed status to false
-                }]
-            });
+          enrollmentContents.push({
+            dir_id: directory._id.toString(), // Assuming directory ID is stored in _id field
+            files: [{
+              file_id: file._id.toString(),
+              marks: 0, // Set initial marks to 0
+              viewed: false // Set initial viewed status to false
+            }]
+          });
         });
-    });
-      
-      
-      
+      });
+
+
+
       const enrollment = await EnrollModel.findOne({
         courseId: requestData.courseId,
         email: requestData.email
       });
-      
+
       if (!enrollment) {
         console.log(enrollmentContents)
         const newEnrollment = new EnrollModel({
           courseId: requestData.courseId,
           contents: enrollmentContents,
           email: requestData.email
-      });
-      
-      await newEnrollment.save();
+        });
+
+        await newEnrollment.save();
         console.log("Enrollment saved");
         return res.send("Enrollment saved");
       } else {
@@ -399,9 +406,9 @@ module.exports = {
       res.status(500).send("Internal server error");
     }
   },
-  getViewStatus:async(req,res)=>{
-    const {cid,uid} = req.body;
-    const enrolledData = await EnrollModel.findOne({courseId:cid,email:uid});
+  getViewStatus: async (req, res) => {
+    const { cid, uid } = req.body;
+    const enrolledData = await EnrollModel.findOne({ courseId: cid, email: uid });
     console.log(enrolledData)
     res.send(enrolledData)
   },
@@ -472,55 +479,55 @@ module.exports = {
 
     console.log(file_id);
     try {
-        // Find the enrolled course based on course_id and user_id
-        const enrolledCourse = await EnrollModel.findOne({ courseId: course_id, email: user_id });
-        
-        if (!enrolledCourse) {
-            return res.status(404).json({ message: 'Enrolled course not found.' });
-        }
-        
-        const contentIndex = enrolledCourse.contents.findIndex(content => content.files.some(file => file.file_id === file_id));
-        if (contentIndex === -1) {
-            return res.status(404).json({ message: 'File not found in enrolled course contents.' });
-        }
+      // Find the enrolled course based on course_id and user_id
+      const enrolledCourse = await EnrollModel.findOne({ courseId: course_id, email: user_id });
 
-        const fileIndex = enrolledCourse.contents[contentIndex].files.findIndex(file => file.file_id === file_id);
+      if (!enrolledCourse) {
+        return res.status(404).json({ message: 'Enrolled course not found.' });
+      }
 
-        // Update marks and viewed status
-        enrolledCourse.contents[contentIndex].files[fileIndex].marks = 100; // Set marks as needed
-        enrolledCourse.contents[contentIndex].files[fileIndex].viewed = true;
+      const contentIndex = enrolledCourse.contents.findIndex(content => content.files.some(file => file.file_id === file_id));
+      if (contentIndex === -1) {
+        return res.status(404).json({ message: 'File not found in enrolled course contents.' });
+      }
 
-        // Save the updated enrolled course back to the database
-        await enrolledCourse.save();
+      const fileIndex = enrolledCourse.contents[contentIndex].files.findIndex(file => file.file_id === file_id);
 
-        return res.status(200).json({ message: 'Quiz submitted successfully.' });
+      // Update marks and viewed status
+      enrolledCourse.contents[contentIndex].files[fileIndex].marks = 100; // Set marks as needed
+      enrolledCourse.contents[contentIndex].files[fileIndex].viewed = true;
+      console.log("files:", enrolledCourse.contents[1].files);
+      // Save the updated enrolled course back to the database
+      await enrolledCourse.save();
+
+      return res.status(200).json({ message: 'Quiz submitted successfully.' });
     } catch (error) {
-        console.error(error);
-        return res.status(500).json({ message: 'Internal server error.' });
+      console.error(error);
+      return res.status(500).json({ message: 'Internal server error.' });
     }
-},
- setComment : async (req, res) => {
-  try {
+  },
+  setComment: async (req, res) => {
+    try {
       const { cid, uid, dir_id, file_id, text } = req.body;
       // Find the course document
-      const user = await UserModel.findOne({email:uid});
+      const user = await UserModel.findOne({ email: uid });
       const name = user.name;
       console.log(name)
       const course = await CourseModel.findById(cid);
       if (!course) {
-          return res.status(404).json({ error: "Course not found" });
+        return res.status(404).json({ error: "Course not found" });
       }
 
       // Find the directory within contents array
       const directory = course.contents.find(dir => dir._id.toString() === dir_id);
       if (!directory) {
-          return res.status(404).json({ error: "Directory not found" });
+        return res.status(404).json({ error: "Directory not found" });
       }
 
       // Find the file within files array
       const file = directory.files.find(f => f._id.toString() === file_id);
       if (!file) {
-          return res.status(404).json({ error: "File not found" });
+        return res.status(404).json({ error: "File not found" });
       }
 
       // Push the new comment to the discussion array of the file
@@ -530,11 +537,11 @@ module.exports = {
       await course.save();
 
       res.status(200).json({ message: "Comment added successfully" });
-  } catch (error) {
+    } catch (error) {
       console.error(error);
       res.status(500).json({ error: "Internal server error" });
-  }
-},
+    }
+  },
 
   getUserPost: async (req, res) => {
     uid = req.body.uid;
@@ -587,7 +594,7 @@ module.exports = {
     );
     res.send(user)
   },
-  searchChatUser: async(req,res)=>{
+  searchChatUser: async (req, res) => {
     const uname = req.params.name;
     console.log(uname)
     const users = await UserModel.find({ name: { $regex: uname, $options: 'i' } });
@@ -595,62 +602,139 @@ module.exports = {
   },
   sendMessage: async (req, res) => {
     try {
-        const { sender, receiver, text } = req.body;
-        const sender_user = await UserModel.findOne({email:sender})
-        const sender_name = sender_user.name
+      const { sender, receiver, text } = req.body;
+      const sender_user = await UserModel.findOne({ email: sender })
+      const sender_name = sender_user.name
 
-        let chatObj = await ChatModel.findOne({ members: { $all: [sender_name, receiver] } });
-        if (!chatObj) {
-            chatObj = await ChatModel.create({ members: [sender_name, receiver], messages: [{ sender, message: text }] });
-        } else {
-            // Add message to the chat object
-            chatObj.messages.push({ sender, message: text });
-            // Save the chat object
-            await chatObj.save();
-        }
+      let chatObj = await ChatModel.findOne({ members: { $all: [sender_name, receiver] } });
+      if (!chatObj) {
+        chatObj = await ChatModel.create({ members: [sender_name, receiver], messages: [{ sender, message: text }] });
+      } else {
+        // Add message to the chat object
+        chatObj.messages.push({ sender, message: text });
+        // Save the chat object
+        await chatObj.save();
+      }
 
-        // Return success response
-        res.status(200).json({ message: 'Message sent successfully', chat: chatObj });
+      // Return success response
+      res.status(200).json({ message: 'Message sent successfully', chat: chatObj });
     } catch (error) {
-        // Handle errors
-        console.error(error);
-        res.status(500).json({ error: 'Internal server error' });
+      // Handle errors
+      console.error(error);
+      res.status(500).json({ error: 'Internal server error' });
     }
   },
   listUserData: async (req, res) => {
     try {
-        const emailId = req.params.emailId;
-        const user = await UserModel.findOne({email:emailId});
-        const uname = user.name
-        const chatRooms = await ChatModel.find({ members: uname });
-        if (!chatRooms) {
-            return res.status(404).json({ message: "No chat rooms found for the user." });
-        }
+      const emailId = req.params.emailId;
+      const user = await UserModel.findOne({ email: emailId });
+      const uname = user.name
+      const chatRooms = await ChatModel.find({ members: uname });
+      if (!chatRooms) {
+        return res.status(404).json({ message: "No chat rooms found for the user." });
+      }
 
-        const otherUserNames = chatRooms.map(room => {
-            const otherMembers = room.members.filter(member => member !== uname); // Exclude the user's own email ID
-            return otherMembers;
-        });
-        response = []
-        otherUserNames.forEach((user,i) => {
-          response.push({
-            id : chatRooms[i]._id,
-            name : user[0],
+      const otherUserNames = chatRooms.map(room => {
+        const otherMembers = room.members.filter(member => member !== uname); // Exclude the user's own email ID
+        return otherMembers;
+      });
+      response = []
+      otherUserNames.forEach((user, i) => {
+        response.push({
+          id: chatRooms[i]._id,
+          name: user[0],
         })
 
-        });
-        res.send(response);
+      });
+      res.send(response);
     } catch (error) {
-        console.error("Error fetching user data:", error);
-        return res.status(500).json({ message: "Internal server error" });
+      console.error("Error fetching user data:", error);
+      return res.status(500).json({ message: "Internal server error" });
     }
   },
-  getMessage: async (req,res)=>{
+  getMessage: async (req, res) => {
     const id = req.params.id;
     const chatData = await ChatModel.findById(id);
     const response = chatData.messages
     res.send(response)
   },
+
+  getRecommendation: async (req, res) => {
+    // Assuming you have access to your UserModel and CourseModel
+    // Fetch all users
+
+    console.log("recommending ...")
+    let enrollmentList;
+    let users;
+    let courses;
+    try {
+      // Fetch all emails from UserModel
+      const userEmails = await UserModel.find({}, 'email');
+      users = userEmails.map(user => user.email);
+
+      // Fetch all course _ids from CourseModel
+      const courseIds = await CourseModel.find({}, '_id');
+      courses = courseIds.map(course => course._id.toString());
+
+      // Initialize enrollmentList with zeros
+      enrollmentList = Array.from({ length: users.length }, () => Array.from({ length: courses.length }, () => 0));
+
+      // Fetch courseId and email from EnrollModel
+      const enrollments = await EnrollModel.find({}, 'courseId email');
+
+      // Update enrollmentList based on enrollments
+      enrollments.forEach(enrollment => {
+        const { courseId, email } = enrollment;
+        const userIndex = users.indexOf(email);
+        const courseIndex = courses.indexOf(courseId);
+
+        if (userIndex !== -1 && courseIndex !== -1) {
+          enrollmentList[userIndex][courseIndex] = 1;
+        }
+      });
+
+      // Output the enrollment list
+      console.log("Enrollment List:", enrollmentList);
+    } catch (err) {
+      console.error("Error:", err);
+    }
+    const userEmail = req.body.email;
+    const userIndex = users.indexOf(userEmail);
+
+    const coMatrix = recommend.coMatrix(enrollmentList, enrollmentList.length, enrollmentList[0].length);
+    const result = recommend.getRecommendations(enrollmentList, coMatrix, userIndex)
+    console.log(result)
+    const recommended = result.map((val) => {
+      if (val !== -1) {
+        return courses[val]
+      }
+    })
+    console.log(recommended);
+    // Use Promise.all to wait for all promises to resolve
+    Promise.all(recommended.map(async (id) => {
+      // Wait for CourseModel.findById to resolve
+      const courseObj = await CourseModel.findById(id);
+      // Return the mapped object
+      return {
+        id: courseObj._id,
+        title: courseObj.title,
+        description: courseObj.description,
+        picture: courseObj.thumbnail,
+        creator: courseObj.creator,
+      };
+    }))
+      .then(response => {
+        // Once all promises are resolved, log the response
+        console.log(response);
+        res.send(response)
+
+      })
+      .catch(err => {
+        // If any promise rejects, log the error
+        console.error("Error:", err);
+      });
+
+  }
 
 };
 

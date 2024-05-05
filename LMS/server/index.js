@@ -17,15 +17,12 @@ const io = new Server(server,{
 io.on('connection',(socket)=>{
   
   socket.on('join-room',(data)=>{
-    console.log("joined"+data.roomId)
 
     socket.join(data.roomId)
   })
   socket.on('msg',(data)=>{
-    console.log(data.message)
     socket.broadcast.to(data.roomId).emit("msg-server",data.message);
   })
-  console.log("client connected")
 })
 
 dbconn()

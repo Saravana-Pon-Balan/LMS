@@ -86,7 +86,7 @@ export default function CourseContent(props) {
  
 
   const handleFileClick =(file,dir_id) => {
-    console.log(file)
+    console.log("filee data:",file)
 
     console.log("dir:",dir_id);
     setVideoUrl("http://localhost:3001/" + file.media_path.split('/').pop());
@@ -230,7 +230,6 @@ export default function CourseContent(props) {
   };
   const sidebarWidth = open ? 230 : 100;
 
-  
 
   return (
     <>
@@ -256,8 +255,9 @@ export default function CourseContent(props) {
           <Typography variant="body1" color="initial" fontSize="25px">
             List of Contents
           </Typography>
+          <Divider></Divider>
+
           <Box>
-            <Divider></Divider>
             <TreeView
               aria-label="file system navigator"
               defaultCollapseIcon={<ExpandMoreIcon />}
@@ -276,7 +276,7 @@ export default function CourseContent(props) {
                         label={file.file_name}
                         onClick={() => handleFileClick(file,content._id)}
                         ref={treeRef}
-/>
+                      />
                        {file.viewed?<CheckCircleIcon color="success"/>:""}
                     </Box>
                   ))}

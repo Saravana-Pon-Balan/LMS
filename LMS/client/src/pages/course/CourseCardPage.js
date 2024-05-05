@@ -9,8 +9,9 @@ import img from "/home/saravana/project/LMS/client/src/components/learnComponent
 import { Link } from 'react-router-dom';
 
 export default function CourseCard(props) {
-  const {id,title,description,creator} = props;
-  
+  let {id,title,description,creator,thumbnail} = props;
+  console.log(thumbnail)
+  thumbnail = "http://localhost:3001/"+thumbnail.split('/').pop()
   return (
     
     <Link style={{textDecoration:"none"}} to={!creator?`/courses/${id}`:`/coursecreation/${id}/${title}/edit`} >
@@ -23,9 +24,10 @@ export default function CourseCard(props) {
     
     >
       <CardMedia
-        sx={{ height: 140 }}
-        image={img}
+        sx={{ height: '200px'}}
+        image={thumbnail}
         title="MUI"
+        
       />
       <CardContent>
         <Typography gutterBottom variant="h5" component="div">
@@ -36,7 +38,7 @@ export default function CourseCard(props) {
         </Typography>
       </CardContent>
       <CardActions sx={{float:"right"}}>
-        <Button size="medium" variant='outlined'>Share</Button>
+        <Button size="medium" variant='outlined'>Enroll</Button>
       </CardActions>
     </Card>
     </Link>

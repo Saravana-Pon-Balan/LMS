@@ -34,7 +34,8 @@ const router = (app) =>{
     app.get('/list_user_data/:emailId',Controller.listUserData);
     app.get('/get_message/:id',Controller.getMessage);
 
-
+    app.post('/get_recommend',Controller.getRecommendation);
+    
     app.get('/course/:id?',Controller.courseList);
 
 

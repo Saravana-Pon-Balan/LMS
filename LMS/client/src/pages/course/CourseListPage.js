@@ -15,6 +15,7 @@ const CourseListPage = (props) => {
               id={creator?course._id:course.id}
               title={course.title}
               description={course.description}
+              thumbnail={creator?course.thumbnail:course.picture}
               creator={creator}
             />
           </Grid>
