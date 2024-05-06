@@ -4,7 +4,7 @@ import CourseCard from './CourseCardPage';
 
 const CourseListPage = (props) => {
    const {course,open,creator,recommended} = props;
-    console.log(recommended.length)
+    console.log(recommended?.length)
   return (
     <>    
 

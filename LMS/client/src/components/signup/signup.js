@@ -16,6 +16,9 @@ const SignUp = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");  
+  const [disableSignUp, setDisableSignUp] = useState(true); // State to manage sign-up button disable
+  const [error, setError] = useState(null);
+
   const navigate = useNavigate();
 
   const responseGoogle = async (response) => {
@@ -35,7 +38,60 @@ const SignUp = () => {
     });
   };
 
+  const handleNameChange = (e) => {
+    const value = e.target.value;
+    setName(value);
+    
+    // Validate if name contains digits
+    if (/\d/.test(value)) {
+      setDisableSignUp(true);
+      setError("Username cannot contain any digits.");
+    } else {
+      setDisableSignUp(false);
+      setError('');
+    }
+  };
+  const handleEmailChange = (e) => {
+    const value = e.target.value;
+    setEmail(value);
+    
+    // Regular expression to validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    
+    if (value.length > 30) {
+      setError("Email cannot exceed 30 characters");
+      setDisableSignUp(true); // Disable submit button
+    } else if (!emailRegex.test(value)) {
+      setError("Invalid email format");
+      setDisableSignUp(true); // Disable submit button
+    } else {
+      setError(null);
+      setDisableSignUp(false); // Enable submit button
+    }
+  };
+  
+
+  // Validation on change
+  const handlePasswordChange = (e) => {
+    const value = e.target.value;
+    setPassword(value);
+    if (value.length > 30) {
+      setError("Password cannot exceed 30 characters");
+      setDisableSignUp(true); // Disable submit button
+    }
+    else if(value.length<8){
+      setError("Password cannot less than 8 characters");
+      setDisableSignUp(true);
+    } 
+    else {
+      setError(null);
+      setDisableSignUp(false); // Enable submit button
+    }
+  };
   const handleSubmit = async () => {
+    if(!password || !email || !name){
+      return setDisableSignUp(true)
+    }
     await axios.post("http://localhost:3001/create_user", {
       email: email,
       name: name,
@@ -53,6 +109,7 @@ const SignUp = () => {
   return (  
     <Box
       sx={{
+        width:'100vw',
         marginTop: 8,
         display: 'flex',
         flexDirection: 'column',
@@ -73,7 +130,7 @@ const SignUp = () => {
           label="Name"
           autoComplete="name"
           autoFocus
-          onChange={(e)=>setName(e.target.value)}
+          onChange={handleNameChange} // Validation on change
         />
         <TextField
           margin="normal"
@@ -81,8 +138,7 @@ const SignUp = () => {
           fullWidth
           label="Email Address"
           autoComplete="email"
-          onChange={(e)=>setEmail(e.target.value)}
-        />
+          onChange={handleEmailChange}        />
         <TextField
           margin="normal"
           required
@@ -90,13 +146,14 @@ const SignUp = () => {
           label="Password"
           type="password"
           autoComplete="current-password"
-          onChange={(e)=>setPassword(e.target.value)}
-        />
+          onChange={handlePasswordChange}        />
+        {error && <Typography color="error">{error}</Typography>}
         <Button
           fullWidth
           variant="contained"
           onClick={handleSubmit}
           sx={{ mt: 3, mb: 2 }}
+          disabled={disableSignUp} // Disable sign-up button based on state
         >
           Sign up
         </Button>

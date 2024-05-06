@@ -5,7 +5,6 @@ import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
-import img from "/home/saravana/project/LMS/client/src/components/learnComponents/Course/img/mui-react.avif";
 import { Link } from 'react-router-dom';
 
 export default function CourseCard(props) {
@@ -20,13 +19,11 @@ export default function CourseCard(props) {
     boxShadow: "3px 9px 6px 4px rgba(14, 14, 14, 0.48)",
     borderRadius:"10px"
     }}
-    
-    >
+    > 
       <CardMedia
         sx={{ height: '200px'}}
         image={thumbnail}
         title="MUI"
-        
       />
       <CardContent>
         <Typography gutterBottom variant="h5" component="div">

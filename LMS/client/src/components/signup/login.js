@@ -1,4 +1,3 @@
-// login.js
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -17,6 +16,7 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
+  const [disableSubmit, setDisableSubmit] = useState(true); // State to manage submit button disable
   const navigate = useNavigate();
 
   const responseGoogle = async (response) => {
@@ -32,28 +32,84 @@ const Login = () => {
       console.log(err);
     })
   };
-  const handleSubmit = async () => {
-     await axios.post("http://localhost:3001/search_user", {
+
+  // Validation on change
+  const handleEmailChange = (e) => {
+    const value = e.target.value;
+    setEmail(value);
+    
+    // Regular expression to validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    
+    if (value.length > 30) {
+      setError("Email cannot exceed 30 characters");
+      setDisableSubmit(true); // Disable submit button
+    } else if (!emailRegex.test(value)) {
+      setError("Invalid email format");
+      setDisableSubmit(true); // Disable submit button
+    } else {
+      setError(null);
+      setDisableSubmit(false); // Enable submit button
+    }
+  };
+  
+
+  // Validation on change
+  const handlePasswordChange = (e) => {
+    const value = e.target.value;
+    setPassword(value);
+    if (value.length > 30) {
+      setError("Password cannot exceed 30 characters");
+      setDisableSubmit(true); // Disable submit button
+    }
+    else if(value.length<8){
+      setError("Password cannot less than 8 characters");
+      setDisableSubmit(true);
+    } 
+    else {
+      setError(null);
+      setDisableSubmit(false); // Enable submit button
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    // Make the API call
+    if(!password || !email){
+      return setDisableSubmit(true)
+    }
+    await axios
+      .post("http://localhost:3001/search_user", {
         email: email,
-        password: password
-      }).then((res)=>{
-        const userData = res.data;
-        cookieManager.setUserInfo(userData);
-        navigate('/');
-      }).catch((error) =>{
-      setError(error);
-    })
+        password: password,
+      })
+      .then((res) => {
+        const user = res.data;
+        console.log(user.userData)
+        if(user.userData === null){
+          setError("Username or password is wrong");
+        }
+        else{
+          cookieManager.setUserInfo(user.userData);
+          navigate("/");
+        }
+        
+      })
+      .catch((error) => {
+        setError(error);
+      });
   };
 
   return (
     <Box
       sx={{
+        width: '100vw',
         marginTop: 8,
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
       }}
     >
+    
       <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
         <LockOutlinedIcon />
       </Avatar>
@@ -68,7 +124,7 @@ const Login = () => {
           label="Email Address"
           value={email}
           autoComplete="email"
-          onChange={(e) => setEmail(e.target.value)}
+          onChange={handleEmailChange}
           autoFocus
         />
         <TextField
@@ -79,15 +135,15 @@ const Login = () => {
           type="password"
           value={password}
           autoComplete="current-password"
-          onChange={(e) => setPassword(e.target.value)}
+          onChange={handlePasswordChange}
         />
         {error && <Typography color="error">{error}</Typography>}
         <Button
-          type="submit"
           fullWidth
           variant="contained"
-          sx={{ mt: 3, mb: 2 }}
           onClick={handleSubmit}
+          sx={{ mt: 3, mb: 2 }}
+          disabled={disableSubmit} // Disable submit button based on state
         >
           Sign In
         </Button>

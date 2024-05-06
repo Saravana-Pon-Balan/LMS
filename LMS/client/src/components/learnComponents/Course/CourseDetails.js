@@ -24,12 +24,14 @@ const CourseDetails = (props) => {
         const response = await axios.post("http://localhost:3001/getCourseDetails", {
           courseId : id 
         });
-        const { title, description, creator, contents } = response.data;
+        console.log(response)
+        const { title, description, creator, contents,thumbnail } = response.data;
         setCourseDetails({
           name: title,
           description: description,
           publisher: creator,
-          contents: contents
+          contents: contents,
+          thumbnail:"http://localhost:3001/"+thumbnail.split('/').pop(),
         });
       } catch (error) {
         console.log(error);
@@ -61,7 +63,7 @@ const CourseDetails = (props) => {
       </Typography>
       <Box margin={"10px"} display={"flex"} maxHeight={"350px"} width={"calc(100vw - 100px)"}>
         <Box display={"flex"} flexDirection={"column"}>
-          <img src={img} alt="Thumbnail" width={"350px"} height={"300px"} style={{ borderRadius: "10px" }} />
+          <img src={courseDetails.thumbnail} alt="Thumbnail" width={"350px"} height={"300px"} style={{ borderRadius: "10px" }} />
         
         <Link to={`/coursecontent/${id}`}>
         <Button onClick={handleEnroll} variant="contained" color="primary" height="60px" style={{ marginTop: "20px", width: "100%" }}>

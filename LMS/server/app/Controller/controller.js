@@ -51,8 +51,8 @@ module.exports = {
   searchUser: async (req, res) => {
     const requestData = req.body;
     try {
-      const userInfo = await UserModel.find({ email: requestData.email });
-      res.send(userInfo);
+      const userInfo = await UserModel.findOne({ email: requestData.email });
+        res.send({userData:userInfo.email});
     } catch (error) {
       console.error(error);
       res.status(500).send("Error occurred while searching for user.");
@@ -181,9 +181,8 @@ module.exports = {
 
   courseList: async (req, res) => {
     try {
-      const id = req.params.id ? req.params.id : null;
-      console.log(id)
-      if (id !== null) {
+      const id = req.params.id !== undefined ? req.params.id : null;
+      if (id !== null && id !== 'undefined') {
         const courseObj = await CourseModel.findById(id);
         const listOfCourse = [{
           id: courseObj._id,
@@ -193,7 +192,6 @@ module.exports = {
           creator: courseObj.creator,
 
         }];
-        console.log(listOfCourse)
         res.send(listOfCourse);
       }
       else {
@@ -386,20 +384,18 @@ module.exports = {
   getEnrolledCourse: async (req, res) => {
     try {
       const requestData = req.body.email;
-      console.log(requestData);
 
       const enrolledCourses = await EnrollModel.find({ email: requestData });
-      console.log(enrolledCourses)
       const response = await Promise.all(enrolledCourses.map(async course => {
         const courseDetails = await CourseModel.findOne({ _id: course.courseId });
 
         return {
           id: courseDetails._id,
           title: courseDetails.title,
-          description: courseDetails.description
+          description: courseDetails.description,
+          picture:courseDetails.thumbnail
         };
       }));
-
       res.send(response);
     } catch (error) {
       console.error("Error retrieving enrolled courses:", error);
@@ -536,7 +532,7 @@ module.exports = {
       // Save the updated course document
       await course.save();
 
-      res.status(200).json({ message: "Comment added successfully" });
+      res.send(file.discussion);
     } catch (error) {
       console.error(error);
       res.status(500).json({ error: "Internal server error" });
@@ -658,7 +654,6 @@ module.exports = {
     const response = chatData.messages
     res.send(response)
   },
-
   getRecommendation: async (req, res) => {
     // Assuming you have access to your UserModel and CourseModel
     // Fetch all users
@@ -671,7 +666,7 @@ module.exports = {
       // Fetch all emails from UserModel
       const userEmails = await UserModel.find({}, 'email');
       users = userEmails.map(user => user.email);
-
+      console.log(users)
       // Fetch all course _ids from CourseModel
       const courseIds = await CourseModel.find({}, '_id');
       courses = courseIds.map(course => course._id.toString());
@@ -700,7 +695,6 @@ module.exports = {
     }
     const userEmail = req.body.email;
     const userIndex = users.indexOf(userEmail);
-
     const coMatrix = recommend.coMatrix(enrollmentList, enrollmentList.length, enrollmentList[0].length);
     const result = recommend.getRecommendations(enrollmentList, coMatrix, userIndex)
     console.log(result)

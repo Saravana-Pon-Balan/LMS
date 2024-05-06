@@ -81,7 +81,7 @@ export default function CourseContent(props) {
     };
 
     getViewStatus();
-  }, [quiz,courseData]);
+  }, [quiz]);
 
  
 
@@ -187,10 +187,10 @@ export default function CourseContent(props) {
 
         }
         await axios.post("http://localhost:3001/set_comment",data)
-        .then(()=>{
+        .then((res)=>{
           setDiscussion([
             ...discussion,
-            data
+            res.data
           ]);
           setComment('');
 

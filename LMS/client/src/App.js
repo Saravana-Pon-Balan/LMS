@@ -54,7 +54,6 @@ const App = () => {
       (
         <Block>
         <Container >
-        {chatBotState&&<ChatDiv/>}
         <Router  open={open} />
         </Container>
       </Block>
