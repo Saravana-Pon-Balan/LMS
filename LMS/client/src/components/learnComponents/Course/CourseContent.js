@@ -21,7 +21,7 @@ export default function CourseContent(props) {
   const [quiz, setQuiz] = useState();
   const [fileId, setFileId] = useState("");
   const [discussion, setDiscussion] = useState([]);
-  const [ticFile, setTicFile] = useState();
+  const [ticFile, setTicFile] = useState(false);
   const [dirId,setDirId] = useState("");
   const { id } = useParams();
   const treeRef = useRef(null)
@@ -99,11 +99,13 @@ export default function CourseContent(props) {
     setCaptions(captionsData);
     setFileId(fileId);
     setDirId(dir_id);
+    setTicFile(file.viewed);
   };
   
 
 
   const Quiz = ({ quizData }) => {
+    console.log("qD",quizData)
     const handleQuizSubmit = async () => {
       // Collect user's selected answers
       const userAnswers = [];
@@ -130,6 +132,7 @@ export default function CourseContent(props) {
           await axios.post('http://localhost:3001/submit_quiz', payload)
           .then((res)=>{
             console.log("mark",res.data.marks)
+            setTicFile(true)
           })
   
           // Update file.viewed to true
@@ -151,28 +154,29 @@ export default function CourseContent(props) {
               ...prevCourseData,
               contents: updatedFileData
           }));
-          console.log("128",courseData)
 
+          console.log("128",courseData)
   
-          // Fetch updated course data
-          const updatedCourseDataResponse = await axios.get(`http://localhost:3001/course_content/${id}`);
-          const updatedCourseData = updatedCourseDataResponse.data;
+          // // Fetch updated course data
+          // const updatedCourseDataResponse = await axios.get(`http://localhost:3001/course_content/${id}`);
+          // const updatedCourseData = updatedCourseDataResponse.data;
   
-          // Find the first unviewed file
-          const unviewedFile = updatedCourseData.contents.find(content =>
-              content.files.some(file => !file.viewed)
-          );
+          // // Find the first unviewed file
+          // const unviewedFile = updatedCourseData.contents.find(content =>
+          //     content.files.some(file => !file.viewed)
+          // );
   
-          if (unviewedFile) {
-              const firstUnviewedFile = unviewedFile.files.find(file => !file.viewed);
-              handleFileClick(firstUnviewedFile, unviewedFile._id);
-          }
+          // if (unviewedFile) {
+          //     const firstUnviewedFile = unviewedFile.files.find(file => !file.viewed);
+          //     handleFileClick(firstUnviewedFile, unviewedFile._id);
+          // }
       } catch (error) {
           console.error('Error submitting quiz answers:', error);
       }
   };
   
-    return (
+  return (
+   !ticFile ? (
       <Box>
         {quizData.map((item, index) => (
           <Box key={item._id}>
@@ -193,7 +197,11 @@ export default function CourseContent(props) {
         ))}
         <Button variant="contained" onClick={handleQuizSubmit}>Submit</Button>
       </Box>
-    );
+    ) : (
+      <Typography variant='h4'>Quiz Submitted</Typography>
+    )
+  );
+  
   };
   const TabPanel = ({ value, index, children }) => {
     return (
