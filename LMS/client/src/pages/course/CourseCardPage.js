@@ -10,6 +10,7 @@ import { Link } from 'react-router-dom';
 export default function CourseCard(props) {
   let {id,title,description,creator,thumbnail} = props;
   thumbnail = "http://localhost:3001/"+thumbnail.split('/').pop()
+  console.log("cre",creator)
   return (
     
     <Link style={{textDecoration:"none"}} to={!creator?`/courses/${id}`:`/coursecreation/${id}/${title}/edit`} >
@@ -23,7 +24,7 @@ export default function CourseCard(props) {
       <CardMedia
         sx={{ height: '200px'}}
         image={thumbnail}
-        title="MUI"
+        title={title}
       />
       <CardContent>
         <Typography gutterBottom variant="h5" component="div">

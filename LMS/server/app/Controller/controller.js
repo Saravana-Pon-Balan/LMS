@@ -109,16 +109,19 @@ module.exports = {
 
       if (edit && file_id) {
         // If it's an edit, find the course and update the file data
+        const updateData = {
+          "contents.$[outer].files.$[inner].file_name": name,
+          "contents.$[outer].files.$[inner].caption": caption,
+          "contents.$[outer].files.$[inner].quizes": JSON.parse(quizQuestions)
+      };
+
+      // Include media_path only if a new file is uploaded
+      if (mediaPath !== null) {
+          updateData["contents.$[outer].files.$[inner].media_path"] = mediaPath;
+      } 
         course = await CourseModel.findOneAndUpdate(
           { _id: courseId },
-          {
-            $set: {
-              "contents.$[outer].files.$[inner].file_name": name,
-              "contents.$[outer].files.$[inner].media_path": mediaPath,
-              "contents.$[outer].files.$[inner].caption": caption,
-              "contents.$[outer].files.$[inner].quizes": JSON.parse(quizQuestions)
-            }
-          },
+          { $set: updateData },
           {
             arrayFilters: [
               { "outer._id": dir_id }, // Filter by dirid
@@ -341,18 +344,49 @@ module.exports = {
 
       const enrollmentContents = [];
 
+
       course.contents.forEach(directory => {
-        directory.files.forEach(file => {
-          enrollmentContents.push({
-            dir_id: directory._id.toString(), // Assuming directory ID is stored in _id field
-            files: [{
-              file_id: file._id.toString(),
-              marks: 0, // Set initial marks to 0
-              viewed: false // Set initial viewed status to false
-            }]
-          });
-        });
+          const existingDirectoryIndex = enrollmentContents.findIndex(item => item.dir_id === directory._id.toString());
+          if (existingDirectoryIndex !== -1) {
+              directory.files.forEach(file => {
+                  const existingFileIndex = enrollmentContents[existingDirectoryIndex].files.findIndex(item => item.file_id === file._id.toString());
+                  if (existingFileIndex === -1) {
+                      enrollmentContents[existingDirectoryIndex].files.push({
+                          file_id: file._id.toString(),
+                          quizes: file.quizes.map(quiz => ({
+                              quiz_id: quiz._id.toString(),
+                              correctOption: quiz.correctOption.toString()
+                          })),
+                          marks: 0, 
+                          viewed: false 
+                      });
+                  }
+              });
+          } else {
+              // Directory not found, add it along with its files
+              const newDirectory = {
+                  dir_id: directory._id.toString(),
+                  files: []
+              };
+              directory.files.forEach(file => {
+                  newDirectory.files.push({
+                      file_id: file._id.toString(),
+                      quizes: file.quizes.map(quiz => ({
+                          quiz_id: quiz._id.toString(),
+                          correctOption: quiz.correctOption.toString()
+                      })),
+                      marks: 0, 
+                      viewed: false 
+                  });
+              });
+              enrollmentContents.push(newDirectory);
+          }
       });
+      
+      console.log("enrollmentContents", enrollmentContents);
+      
+
+    
 
 
 
@@ -362,7 +396,7 @@ module.exports = {
       });
 
       if (!enrollment) {
-        console.log(enrollmentContents)
+        console.log("enrollmentContents",enrollmentContents)
         const newEnrollment = new EnrollModel({
           courseId: requestData.courseId,
           contents: enrollmentContents,
@@ -469,39 +503,58 @@ module.exports = {
     res.send(response);
   },
   submitQuiz: async (req, res) => {
+    const { user_id, answers, course_id, file_id } = req.body;
 
-    const { user_id, answer, course_id, file_id } = req.body;
-    console.log(course_id);
-
-    console.log(file_id);
     try {
-      // Find the enrolled course based on course_id and user_id
-      const enrolledCourse = await EnrollModel.findOne({ courseId: course_id, email: user_id });
+        // Find the enrolled course based on course_id and user_id
+        const enrolledCourse = await EnrollModel.findOne({ courseId: course_id, email: user_id });
 
-      if (!enrolledCourse) {
-        return res.status(404).json({ message: 'Enrolled course not found.' });
-      }
+        if (!enrolledCourse) {
+            return res.status(404).json({ message: 'Enrolled course not found.' });
+        }
 
-      const contentIndex = enrolledCourse.contents.findIndex(content => content.files.some(file => file.file_id === file_id));
-      if (contentIndex === -1) {
-        return res.status(404).json({ message: 'File not found in enrolled course contents.' });
-      }
+        const contentIndex = enrolledCourse.contents.findIndex(content => content.files.some(file => file.file_id === file_id));
+        if (contentIndex === -1) {
+            return res.status(404).json({ message: 'File not found in enrolled course contents.' });
+        }
 
-      const fileIndex = enrolledCourse.contents[contentIndex].files.findIndex(file => file.file_id === file_id);
+        const fileIndex = enrolledCourse.contents[contentIndex].files.findIndex(file => file.file_id === file_id);
 
-      // Update marks and viewed status
-      enrolledCourse.contents[contentIndex].files[fileIndex].marks = 100; // Set marks as needed
-      enrolledCourse.contents[contentIndex].files[fileIndex].viewed = true;
-      console.log("files:", enrolledCourse.contents[1].files);
-      // Save the updated enrolled course back to the database
-      await enrolledCourse.save();
+        // Retrieve correct options for the quizzes in the file
+        const correctOptions = enrolledCourse.contents[contentIndex].files[fileIndex].quizes.map(quiz => ({ q_id: quiz.quiz_id, CO: quiz.correctOption }));
+        console.log("525",correctOptions)
+        // Calculate marks
+        let totalQuestions = correctOptions.length;
+        let correctAnswers = 0;
 
-      return res.status(200).json({ message: 'Quiz submitted successfully.' });
+        answers.forEach(answer => {
+            const { questionId, selectedOptionIndex } = answer;
+            const correctOptionIndex = correctOptions.findIndex(option => option.q_id === questionId);
+            if (correctOptionIndex !== -1 && correctOptionIndex+1 === selectedOptionIndex) {
+                correctAnswers++;
+            }
+        });
+        console.log("537",correctAnswers)
+        console.log("538",totalQuestions)
+        const marks = (correctAnswers / totalQuestions) * 100;
+
+        if (isNaN(marks)) {
+            return res.status(400).json({ message: 'Invalid quiz answers provided.' });
+        }
+
+        // Update marks and viewed status
+        enrolledCourse.contents[contentIndex].files[fileIndex].marks = marks;
+        enrolledCourse.contents[contentIndex].files[fileIndex].viewed = true;
+
+        // Save the updated enrolled course back to the database
+        await enrolledCourse.save();
+
+        return res.status(200).json({ message: 'Quiz submitted successfully.', marks });
     } catch (error) {
-      console.error(error);
-      return res.status(500).json({ message: 'Internal server error.' });
+        console.error(error);
+        return res.status(500).json({ message: 'Internal server error.' });
     }
-  },
+},
   setComment: async (req, res) => {
     try {
       const { cid, uid, dir_id, file_id, text } = req.body;
@@ -706,6 +759,7 @@ module.exports = {
     console.log(recommended);
     // Use Promise.all to wait for all promises to resolve
     Promise.all(recommended.map(async (id) => {
+      if(id !== 'undefined'){
       // Wait for CourseModel.findById to resolve
       const courseObj = await CourseModel.findById(id);
       // Return the mapped object
@@ -716,6 +770,7 @@ module.exports = {
         picture: courseObj.thumbnail,
         creator: courseObj.creator,
       };
+    }   
     }))
       .then(response => {
         // Once all promises are resolved, log the response

@@ -25,117 +25,153 @@ export default function CourseContent(props) {
   const [dirId,setDirId] = useState("");
   const { id } = useParams();
   const treeRef = useRef(null)
-  console.log("cdata",courseData);
+
   useEffect(() => {
-    const getCourse = async()=>{
-      console.log("1st")
-      await axios.get(`http://localhost:3001/course_content/${id}`)
-      .then((response) => {
-        setCourseData(response.data)
-      })
-      .catch(error => {
-        console.error('Error fetching course content:', error);
-      });
-    }
-      getCourse()
-  }, []);
+    const fetchData = async () => {
+        try {
+            const response = await axios.get(`http://localhost:3001/course_content/${id}`);
+            const courseData = response.data;
+
+            const viewStatusResponse = await axios.post("http://localhost:3001/get_view_status", {
+                cid: id,
+                uid: userData
+            });
+            const viewedStatusData = viewStatusResponse.data.contents;
+
+            const viewedFiles = {};
+
+            const updatedCourseData = courseData.contents.map(content => {
+
+                const updatedFiles = content.files.map(file => {
+                   
+                  console.log("file",file)
+                    const viewedStatus = viewedStatusData.find(status => status.dir_id === content._id);
+                    console.log("vs",viewedStatus)
+                    if (viewedStatus) {
+                        const fileStatus = viewedStatus.files.find(fileStatus => fileStatus.file_id === file._id);
+                        if (fileStatus && !viewedFiles[file._id]) {
+                            console.log("61",fileStatus)
+                            viewedFiles[file._id] = true;
+                            return { ...file, viewed: fileStatus.viewed };
+                        }
+                    }
+                    return file;
+                });
+
+                return { ...content, files: updatedFiles };
+            });
+
+            setCourseData({ ...courseData, contents: updatedCourseData });
+
+            const unviewedFile = updatedCourseData.find(content =>
+                content.files.some(file => !file.viewed)
+            );
+
+            if (unviewedFile) {
+                const firstUnviewedFile = unviewedFile.files.find(file => !file.viewed);
+                handleFileClick(firstUnviewedFile, unviewedFile._id);
+            }
+        } catch (error) {
+            console.error('Error fetching course data:', error);
+        }
+    };
+
+    fetchData();
+}, []);
+
+
+
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
-  useEffect(() => {
-    console.log("2nd")
-    const getViewStatus = async () => {
-        const response = await axios.post("http://localhost:3001/get_view_status", {
-            cid: id,
-            uid: userData
-        });
-        // Extract the viewed status data from the response
-        const viewedStatusData = response.data.contents;
 
-        // Update the course data with viewed status
-        const updatedCourseData = courseData?.contents.map(directory => {
-            const viewedStatus = viewedStatusData.find(status => status.dir_id === directory._id);
-            if (viewedStatus) {
-                directory.files.forEach(file => {
-                    const fileStatus = viewedStatus.files.find(fileStatus => fileStatus.file_id === file._id);
-                    if (fileStatus) {
-                        file.viewed = fileStatus.viewed;
-                    }
-                });
-            }
-            return directory;
-        });
-        if (courseData) {
-          const unviewedFile = courseData.contents.find(content =>
-            content.files.some(file =>!file.viewed)
-          );
-          console.log(unviewedFile)
-            setDirId(unviewedFile._id);
-          if (unviewedFile) {
-            console.log(unviewedFile);
-            const firstUnviewedFile = unviewedFile.files.find(file =>!file.viewed);
-            handleFileClick(firstUnviewedFile,dirId);
-          }
-        }
-        // Do something with the updatedCourseData (e.g., set it to state)
-    };
-
-    getViewStatus();
-  }, [quiz]);
-
- 
-
-  const handleFileClick =(file,dir_id) => {
-    console.log("filee data:",file)
-
-    console.log("dir:",dir_id);
-    setVideoUrl("http://localhost:3001/" + file.media_path.split('/').pop());
-    setQuiz(file.quizes);
-    setDiscussion(file.discussion);
-    setCaptions(file.caption);
-    setFileId(file._id);
-    setDirId(dir_id)
+  const handleFileClick = (file, dir_id) => {
+    console.log("file",file,"dirId",dir_id);
+    const videoUrl = "http://localhost:3001/" + file.media_path.split('/').pop();
+    const quizData = file.quizes;
+    const discussionData = file.discussion;
+    const captionsData = file.caption;
+    const fileId = file._id;
+  
+    setVideoUrl(videoUrl);
+    setQuiz(quizData);
+    setDiscussion(discussionData);
+    setCaptions(captionsData);
+    setFileId(fileId);
+    setDirId(dir_id);
   };
+  
 
 
   const Quiz = ({ quizData }) => {
-    const handleQuizSubmit = () => {
+    const handleQuizSubmit = async () => {
       // Collect user's selected answers
       const userAnswers = [];
       quizData.forEach((question, index) => {
-        const selectedOptionIndex = document.querySelector(`input[name="question${index}"]:checked`)?.value;
-        if (selectedOptionIndex) {
-          userAnswers.push({
-            questionId: question._id,
-            selectedOptionIndex: parseInt(selectedOptionIndex)
-          });
-        }
+          const selectedOptionIndex = document.querySelector(`input[name="question${index}"]:checked`)?.value;
+          if (selectedOptionIndex) {
+              userAnswers.push({
+                  questionId: question._id,
+                  selectedOptionIndex: parseInt(selectedOptionIndex)
+              });
+          }
       });
-
+  
       // Construct payload to send to server
       const payload = {
-        user_id: userData, // Assuming you have a userId to associate with the quiz answers
-        answers: userAnswers,
-        course_id: courseData._id,
-        file_id: fileId,
+          user_id: userData, // Assuming you have a userId to associate with the quiz answers
+          answers: userAnswers,
+          course_id: courseData._id,
+          file_id: fileId,
       };
-
-      // Make POST request to server
-      axios.post('http://localhost:3001/submit_quiz', payload)
-        .then(response => {
-
-          setTicFile(fileId);
-          setCourseData(prevCourseData => {
-            const updatedFile = { ...prevCourseData.contents.find(content => content._id === fileId), quizSubmitted: true };
-            const updatedContents = prevCourseData.contents.map(content => content._id === fileId ? updatedFile : content);
-            return { ...prevCourseData, contents: updatedContents };
+  
+      try {
+          // Make POST request to submit quiz answers
+          await axios.post('http://localhost:3001/submit_quiz', payload)
+          .then((res)=>{
+            console.log("mark",res.data.marks)
+          })
+  
+          // Update file.viewed to true
+          const updatedFileData = courseData.contents.map(content => {
+              if (content._id === dirId) {
+                  const updatedFiles = content.files.map(file => {
+                      if (file._id === fileId) {
+                          return { ...file, viewed: true };
+                      }
+                      return file;
+                  });
+                  return { ...content, files: updatedFiles };
+              }
+              return content;
           });
+  
+          // Set updated course data
+          setCourseData(prevCourseData => ({
+              ...prevCourseData,
+              contents: updatedFileData
+          }));
+          console.log("128",courseData)
 
-        })
-        .catch(error => {
+  
+          // Fetch updated course data
+          const updatedCourseDataResponse = await axios.get(`http://localhost:3001/course_content/${id}`);
+          const updatedCourseData = updatedCourseDataResponse.data;
+  
+          // Find the first unviewed file
+          const unviewedFile = updatedCourseData.contents.find(content =>
+              content.files.some(file => !file.viewed)
+          );
+  
+          if (unviewedFile) {
+              const firstUnviewedFile = unviewedFile.files.find(file => !file.viewed);
+              handleFileClick(firstUnviewedFile, unviewedFile._id);
+          }
+      } catch (error) {
           console.error('Error submitting quiz answers:', error);
-        });
-    }
+      }
+  };
+  
     return (
       <Box>
         {quizData.map((item, index) => (

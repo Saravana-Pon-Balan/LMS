@@ -21,7 +21,6 @@ const CourseListPage = (props) => {
               title={rec.title}
               description={rec.description}
               thumbnail={rec.picture}
-              creator={rec.creator}
             />
           </Grid>
         ))}

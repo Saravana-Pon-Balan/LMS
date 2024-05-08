@@ -35,7 +35,7 @@ const courseSchema = new Schema(
                         quizes:[
                             {
                             question:{type:String},
-                            correct_option:{type:String},
+                            correctOption:{type:Number},
                             options:[ ]
                             }
                         ],
@@ -95,6 +95,12 @@ const courseEnrollSchema = new Schema({
             files:[
                 {
                 file_id:{type:String},
+                quizes:[
+                    {
+                    quiz_id:{type:String},
+                    correctOption:{type:String}
+                    }
+                ],
                 marks:{type:Number},
                 viewed:{type:Boolean},
                 }

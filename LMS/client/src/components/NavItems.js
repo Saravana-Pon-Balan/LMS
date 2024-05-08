@@ -56,7 +56,7 @@ export default function NavItems() {
       onClose={handleMenuClose}
     >
       <Link to={'/profile'} style={{textDecoration:'none'}}><MenuItem onClick={handleMenuClose}>Profile</MenuItem></Link>
-      <MenuItem onClick={handleMenuClose}>My account</MenuItem>
+      <MenuItem onClick={handleMenuClose}>Logout</MenuItem>
     </Menu>
   );
 
@@ -147,36 +147,16 @@ export default function NavItems() {
         </Link>
       <Link to="/feed" style={{ textDecoration: "none",color:"white" }}>
       <IconButton size="large" aria-label="show 4 new mails" color="inherit">
-          <Badge badgeContent={5} color="error">
             <HomeIcon />
-          </Badge>
         </IconButton>
         </Link>
-        <Link to="/network" style={{ textDecoration: "none",color:"white" }}>
-        <IconButton size="large" aria-label="show 4 new mails" color="inherit">
-          <Badge badgeContent={5} color="error">
-            <PeopleIcon />
-          </Badge>
-        </IconButton>
-        </Link>
+        
         <Link to="/message" style={{ textDecoration: "none",color:"white" }}>
         <IconButton size="large" aria-label="show 4 new mails" color="inherit">
-          <Badge badgeContent={5} color="error">
             <ChatIcon />
-          </Badge>
         </IconButton>
         </Link>
-        <Link to="/notification" style={{ textDecoration: "none",color:"white" }}>
-        <IconButton
-          size="large"
-          aria-label="show 17 new notifications"
-          color="inherit"
-        >
-          <Badge badgeContent={17} color="error">
-            <NotificationsIcon />
-          </Badge>
-        </IconButton>
-        </Link>
+        
         <IconButton
           size="large"
           edge="end"
